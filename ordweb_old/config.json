@@ -1,0 +1,4 @@
+{
+  "twitterClientId": "aEFaRXR0NlNsUExxMEFGWS1kejg6MTpjaQ",
+  "twitterRedirectUri": "/api/twitter/callback"
+}

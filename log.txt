@@ -1,0 +1,56 @@
+[2023-08-15T20:44:29.439Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:29.439Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:30.190Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:30.190Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:30.897Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:30.898Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:31.701Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:31.702Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:32.477Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:32.477Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:33.226Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:33.226Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:33.939Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:33.940Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:34.816Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:34.816Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:35.535Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:35.535Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:36.271Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:36.271Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:39.260Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:39.261Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:39.937Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:39.938Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:40.637Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:40.638Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:41.345Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:41.345Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:42.016Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:42.016Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:43.011Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:43.011Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:43.709Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:43.710Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:44.377Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:44.378Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:45.101Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:45.101Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:46.091Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:46.091Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:46.797Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:46.798Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:47.777Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:47.778Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:48.459Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:48.460Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:49.181Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:49.181Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:49.896Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:49.896Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:50.602Z] - Inserted 100 inscriptions successfully
+[2023-08-15T20:44:50.602Z] - Inserted 100 inscriptions into the database.
+[2023-08-15T20:44:51.177Z] - Inserted 1 inscriptions successfully
+[2023-08-15T20:44:51.178Z] - Inserted 1 inscriptions into the database.
+[2023-08-15T20:48:34.671Z] - Inserted 1 inscriptions successfully
+[2023-08-15T20:48:34.674Z] - Inserted 1 inscriptions into the database.

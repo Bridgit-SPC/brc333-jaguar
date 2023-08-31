@@ -1,0 +1,41 @@
+import { getSession } from 'next-auth/react';
+const Twit = require('twit');
+
+export default async function handler(req, res) {
+  // Get the session before accessing its properties
+  const session = await getSession({ req });
+
+  if (!session) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  // Now you can access and log the session data
+  console.log('Session:', session);
+
+  const TWITTER_API_KEY = process.env.TWITTER_CLIENT_ID;
+  const TWITTER_API_SECRET = process.env.TWITTER_CLIENT_SECRET;
+  const CALLBACK_URL = `${process.env.BASE_URL}/api/twitter/callback`;
+
+  console.log('TWITTER_API_KEY=',TWITTER_API_KEY);
+  console.log('Access Token:', session.access_token);
+  console.log('Access Token Secret:', session.access_token_secret);
+
+
+  // Assuming you have obtained access_token and access_token_secret through OAuth
+  const T = new Twit({
+    consumer_key: TWITTER_API_KEY,
+    consumer_secret: TWITTER_API_SECRET,
+    access_token: session.access_token, // User's access token
+    access_token_secret: session.access_token_secret, // User's access token secret
+  });
+
+  T.getRequestToken((err, data) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to get request token' });
+    }
+    req.session.oauthToken = data.oauth_token;
+    req.session.oauthTokenSecret = data.oauth_token_secret;
+    res.redirect(`https://api.twitter.com/oauth/authorize?oauth_token=${data.oauth_token}`);
+  });
+}
+
