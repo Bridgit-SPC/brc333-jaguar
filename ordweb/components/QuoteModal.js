@@ -4,12 +4,17 @@ import styles from './QuoteModal.module.css';
 export const QuoteModal = ({ isOpen, onClose, inscriptionid, quotedInscriptionContent, twitterHandle }) => {
   const [comment, setComment] = useState('');
 
-  const handlePostClick = () => {
+  const handlePostClick = async () => {
     try {
       if (comment) {
         console.log('twitterHandle at handleLike=',twitterHandle);
         console.log('inscriptionid=',inscriptionid);
-        const response = await axios.post(`/api/response`, { inscriptionid, user: twitterHandle, 'repost', comment, media : null });
+        const response = await axios.post(`/api/response`, { 
+          inscriptionid, 
+          user: twitterHandle,    
+          operation: 'repost', 
+          content: comment, 
+          media: media ? media : null, });
         console.log('repostsCount (before setRepostsCount) =',repostsCount);
         setLikesCount(repostsCount + 1);
         console.log('repostsCount (after setRepostsCount)=',repostsCount);

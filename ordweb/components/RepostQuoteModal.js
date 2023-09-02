@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./RepostQuoteModal.module.css"; 
+import axios from "axios";
 
 export const RepostQuoteModal = ({ onClose, buttonPosition, userReposted, twitterHandle, inscriptionid, quotedInscriptionContent }) => {
   const modalRef = useRef(null);
@@ -65,31 +66,32 @@ useEffect(() => {
 
   console.log("modalStyle:", modalStyle); // Add this log statement
 
-  return (
-
-  <div
-    ref={modalRef}
-    className={`${styles["repost-quote-modal"]} ${
-      buttonPosition ? styles["highlighted-row"] : ""
-    }`}
-    style={modalStyle}
-  >
-    <div className={styles["modal-content"]}>
-        <button onClick={handleRepostOption}>Repost</button><br></br>
-        <button onClick={handleQuoteOption}>Quote</button>
+return (
+    <div
+      ref={modalRef}
+      className={`${styles["repost-quote-modal"]} ${
+        buttonPosition ? styles["highlighted-row"] : ""
+      }`}
+      style={modalStyle}
+    >
+      <div className={styles["modal-content"]}>
+          <button onClick={handleRepostOption}>Repost</button><br></br>
+          <button onClick={handleQuoteOption}>Quote</button>
+      </div>
     </div>
-  </div>
+  ); 
 
   {quoteModalOpen && (
     <QuoteModal
       isOpen={quoteModalOpen}
       onClose={() => setQuoteModalOpen(false)}
-      inscriptionid={inscriptionid=}
+      inscriptionid={inscriptionid}
       quotedInscriptionContent={quotedInscriptionContent}
       twitterHandle={twitterHandle}
     />
   )}
-
-  );
 };
+
+
+
 
