@@ -1,17 +1,11 @@
 const { Pool } = require('pg');
 
-//const pool = new Pool({
-//  user: process.env.DB_USER,
-//  host: process.env.DB_HOST,
-//  database: process.env.DB_NAME,
-//  password: process.env.DB_PASSWORD,
-//  port: process.env.DB_PORT,
-//});
-
-const connectionString = `postgresql://postgres:d0nt8Eevil$%$@psg-aurora.cluster-covvmmm4ujrt.us-east-1.rds.amazonaws.com:5432/bitcoin`;
-
 const pool = new Pool({
-  connectionString: connectionString,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 });
 
 export async function getTweets(page = 1, limit = 50) {
@@ -33,24 +27,27 @@ export async function getTweets(page = 1, limit = 50) {
   }
 }
 
-export async function addResponse({ parent, address, operation, content, media }) {
+export async function addResponse({ parent, user, operation, content = null, media = null }) {
   try {
+    console.log(parent,' ', user,' ', operation);
     const query = `
       INSERT INTO responses (parent, address, operation, content, media)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *;
     `;
     
-    const values = [parent, address, operation, content, media];
+    const values = [parent, user, operation, content , media ];
     
+    console.log('query and values=', query, ' ', values);
+ 
     const client = await pool.connect();
     const result = await client.query(query, values);
     client.release();
-
+    //console.log('result=',result);
     return result.rows[0];
   } catch (error) {
     console.error('Error adding response:', error);
-    throw error; // Rethrow the error to handle it elsewhere
+    throw error; 
   }
 }
 
@@ -87,10 +84,13 @@ export async function getTweetState(inscriptionId, user) {
         COALESCE(
            EXISTS (SELECT 1 FROM responses WHERE parent = $1 AND operation = 'bookmark' AND address = $2),
            false
-        ) AS userBookmarked;
+        ) AS userBookmarked,
+        (SELECT id FROM responses WHERE parent = $1 AND operation = 'like' AND address = $2 ORDER BY id LIMIT 1) AS userLikedId,
+    	(SELECT id FROM responses WHERE parent = $1 AND operation = 'repost' AND address = $2 ORDER BY id LIMIT 1) AS userRepostedId,
+    	(SELECT id FROM responses WHERE parent = $1 AND operation = 'bookmark' AND address = $2 ORDER BY id LIMIT 1) AS userBookmarkedId;
     `;
     const result = await client.query(query, [inscriptionId, user]);
-    // console.log('query= ', query);
+    //console.log('query= ', query);
     client.release();
     return result.rows;
   } catch (error) {

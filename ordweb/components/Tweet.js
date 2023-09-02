@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "../styles/reply-modal.css";
-import ReplyModal from "./ReplyModal";
-import QuoteModal from "./QuoteModal";
-import LoginModal from "./LoginModal";
+import { ReplyModal } from "./ReplyModal";
+import { QuoteModal } from "./QuoteModal";
+import { RepostQuoteModal } from "./RepostQuoteModal";
+import { getSession, signIn, signOut, useSession } from "next-auth/react";
 let user;
 
 export function Tweet({
@@ -14,8 +15,8 @@ export function Tweet({
   twitterClientSecret,
   twitterRedirectUri,
 }) {
+  const [repostButtonPosition, setRepostButtonPosition] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [content, setContent] = useState("");
   const [likesCount, setLikesCount] = useState(0);
@@ -27,6 +28,31 @@ export function Tweet({
   const [userBookmarked, setUserBookmarked] = useState(false);
   const [replyModalOpen, setReplyModalOpen] = useState(false);
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
+  const [userLikedId, setUserLikedId] = useState(false);
+  const [userBookmarkedId, setUserBookmarkedId] = useState(false);
+  const [userRepostedId, setUserRepostedId] = useState(false);
+  const [twitterHandle, setTwitterHandle] = useState('');
+  const [repostQuoteModalOpen, setRepostQuoteModalOpen] = useState(false);
+  const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+  const [clickedButton, setClickedButton] = useState(null);
+  const [buttonPosition, setButtonPosition] = useState(null);
+  const buttonRef = useRef(null); 
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session) {
+      setLoggedIn(true);
+      if (session.user.name) {
+	const usernameMatch = session.user.name.match(/\(([^)]+)\)/); 
+      	const twitterUsername = usernameMatch ? usernameMatch[1].toLowerCase() : '';
+        console.log('twitterHan=',twitterUsername); 
+        setTwitterHandle(twitterUsername);
+      }
+    } else {
+      setLoggedIn(false);
+      setTwitterHandle(''); 
+    }
+  }, [session]);
 
   // Fetch content from the server
   useEffect(() => {
@@ -44,48 +70,50 @@ export function Tweet({
     axios
       .get(`/api/tweet-state?id=${inscriptionid}&user=${user || "unknown"}`)
       .then((response) => {
-        console.log("response=", response.data);
-        setUserLiked(response.userLiked);
-        setUserReposted(response.userReposted);
-        setUserBookmarked(response.userBookmarked);
-        setLikesCount(response.likesCount);
-        setRepostsCount(response.repostsCount);
-        setRepliesCount(response.repliesCount);
-        setBookmarksCount(response.bookmarksCount);
+         const tweetState = response.data.tweetState[0];
+         console.log('tweetState=',tweetState);
+         setUserLiked(tweetState.userliked);
+         setUserReposted(tweetState.userreposted);
+         setUserBookmarked(tweetState.userbookmarked);
+         setLikesCount(parseInt(tweetState.likescount)); 
+         setRepostsCount(parseInt(tweetState.repostscount)); 
+         setRepliesCount(parseInt(tweetState.repliescount)); 
+         setBookmarksCount(parseInt(tweetState.bookmarkscount));
+         setUserLikedId(tweetState.userlikedid);
+         setUserRepostedId(tweetState.userrepostedid); 
+	 setUserBookmarkedId(tweetState.userbookmarkedid);  
       })
       .catch((error) => {
         console.error("Error fetching user state and counts:", error);
       });
   }, [inscriptionid, twitterClientId, twitterClientSecret, twitterRedirectUri]);
 
-  useEffect(() => {
-    console.log("loginModalOpen=", loginModalOpen);
-  }, [loginModalOpen]);
-
-  const handleLikeClick = () => {
-    console.log("loggedIn=", loggedIn);
+  const handleLikeClick = async () => {
+    //console.log("loggedIn=", loggedIn);
+    console.log('likesCount (before)=',likesCount);
+    console.log('userLiked=',userLiked);
     if (!loggedIn) {
-      setLoginModalOpen(true);
-    } else {
+       signIn(); 
+     } else {
       if (!userLiked) {
-        // Send a POST request to your server to like the tweet
-        axios
-          .post(`/api/like`, { inscriptionid, user })
-          .then((response) => {
-            // Update likesCount and userLiked states based on the server response
-            setLikesCount(response.data.newLikesCount);
-            setUserLiked(true);
-          })
-          .catch((error) => {
-            console.error("Error liking tweet:", error);
-          });
+        try {
+          console.log('twitterHandle at handleLike=',twitterHandle);
+          console.log('inscriptionid=',inscriptionid);
+          const response = await axios.post(`/api/like`, { inscriptionid, user: twitterHandle });
+          console.log('likesCount (before setLikesCount) =',likesCount);
+          setLikesCount(likesCount + 1);
+          console.log('likesCount (after setLikesCount)=',likesCount);
+          setUserLiked(true);
+        } catch (error) {
+          console.error("Error liking tweet:", error);
+        }
       } else {
-        // Send a DELETE request to your server to remove the like
+        // Send a DELETE request to remove the like
         axios
-          .delete(`/api/unlike`, { data: { inscriptionid, user } })
+          .delete(`/api/removeResponse`, { data: { interactionId: userLikedId } })
           .then((response) => {
             // Update likesCount and userLiked states based on the server response
-            setLikesCount(response.data.newLikesCount);
+            setLikesCount(likesCount-1);
             setUserLiked(false);
           })
           .catch((error) => {
@@ -95,35 +123,28 @@ export function Tweet({
     }
   };
 
-  // Handle repost button click
-  const handleRepostClick = () => {
-    if (!loggedIn) {
-      setLoginModalOpen(true);
-    } else {
-      if (!userReposted) {
-        // Show repost/quote options in a modal
-      } else {
-        // Show undo repost/quote options in a modal
-      }
-    }
-  };
-
   // Handle reply button click
   const handleReplyClick = () => {
     if (!loggedIn) {
-      setLoginModalOpen(true);
+       signIn();
     } else {
       setReplyModalOpen(true);
     }
   };
 
-  // Handle quote button click
-  const handleQuoteClick = () => {
+  // Handle repost button click
+  const handleRepostClick = (e) => {
     if (!loggedIn) {
-      setLoginModalOpen(true);
+       signIn();
     } else {
-      setQuoteModalOpen(true);
-    }
+      const buttonPosition = {
+        top: e.clientY + window.scrollY,
+        left: e.clientX,
+      };
+      setButtonPosition(buttonPosition); 
+      setRepostQuoteModalOpen(true); 
+      //console.log('repostQuoteModalOpen=',repostQuoteModalOpen);
+    }   
   };
 
   const renderContent = () => {
@@ -169,7 +190,7 @@ export function Tweet({
             <p>{likesCount} Likes</p>
           </div>
           <div>
-            <button onClick={handleRepostClick}>
+            <button onClick={(e) => handleRepostClick(e)}>
               <img
                 src={
                   userReposted
@@ -186,34 +207,27 @@ export function Tweet({
           </div>
         </div>
 
-        {loginModalOpen && (
-          <LoginModal
-            isOpen={loginModalOpen}
-            onClose={() => setLoginModalOpen(false)}
-            loginError={loginError}
-            twitterClientId={twitterClientId}
-            twitterClientSecret={twitterClientSecret}
-            twitterRedirectUri={twitterRedirectUri}
-          />
-        )}
-
         {replyModalOpen && (
           <ReplyModal
             isOpen={replyModalOpen}
             onClose={() => setReplyModalOpen(false)}
-            quotedInscriptionContent={content}
-            user={user}
+            twitterHandle={twitterHandle}
+            inscriptionid={inscriptionid}
+            quotedInscriptionContent={renderContent()}
           />
         )}
 
-        {quoteModalOpen && (
-          <QuoteModal
-            isOpen={quoteModalOpen}
-            onClose={() => setQuoteModalOpen(false)}
-            quotedInscriptionContent={content}
-            user={user}
+        {repostQuoteModalOpen && (
+          <RepostQuoteModal
+            onClose={() => setRepostQuoteModalOpen(false)}
+            buttonPosition={buttonPosition}
+            userReposted={userReposted}
+            twitterHandle={twitterHandle}
+            inscriptionid={inscriptionid}
+            quotedInscriptionContent={renderContent()}
           />
         )}
+
       </div>
     </div>
   );

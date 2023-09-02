@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import styles from './QuoteModal.module.css';
 
-export default function QuoteModal({ isOpen, onClose, quotedInscriptionContent, walletAddress 
-}) {
+export const QuoteModal = ({ isOpen, onClose, inscriptionid, quotedInscriptionContent, twitterHandle }) => {
   const [comment, setComment] = useState('');
 
   const handlePostClick = () => {
-    // Perform the post action here
-    console.log('Posting comment:', comment);
+    try {
+      if (comment) {
+        console.log('twitterHandle at handleLike=',twitterHandle);
+        console.log('inscriptionid=',inscriptionid);
+        const response = await axios.post(`/api/response`, { inscriptionid, user: twitterHandle, 'repost', comment, media : null });
+        console.log('repostsCount (before setRepostsCount) =',repostsCount);
+        setLikesCount(repostsCount + 1);
+        console.log('repostsCount (after setRepostsCount)=',repostsCount);
+        setUserReposted(true);
+      }
+    } catch (error) {
+        console.error("Error Quoting tweet:", error);
+    }
     onClose();
   };
 

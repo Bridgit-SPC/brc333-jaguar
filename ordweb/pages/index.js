@@ -4,7 +4,6 @@ import { Tweet } from "../components/Tweet";
 import axios from "axios"; // Import Axios
 import styles from "./styles.module.css";
 import { useRouter } from "next/router";
-import LoginModal from "../components/LoginModal";
 import { getSession, signIn, signOut, useSession } from "next-auth/react";
 
 export default function Feed({
@@ -15,15 +14,14 @@ export default function Feed({
 }) {
   const [page, setPage] = useState(2);
   const [tweets, setTweets] = useState(initialTweets);
-  console.log("++++++++++>", twitterRedirectUri);
+  //console.log("++++++++++>", twitterRedirectUri);
   const router = useRouter();
   const { twitterHandle, loginError } = router.query;
+  const [hasLoginError, setHasLoginError] = useState(!!loginError);
 
   useEffect(() => {
     // Handle login error and twitter handle here
-    if (loginError) {
-      console.log("Authentication failed");
-    }
+    setHasLoginError(!!loginError); // Convert to boolean and set the state
     if (twitterHandle) {
       console.log("Authenticated user Twitter handle:", twitterHandle);
     }
@@ -54,6 +52,13 @@ export default function Feed({
           <a href="#about">Teweets</a>
         </div>
 
+        {hasLoginError && (
+          <div>
+          <p>Authentication failed. Please click the button below to sign in.</p>
+          <button onClick={() => signIn()}>Sign in</button>
+          </div>
+        )}
+
         <div className={styles.navList}>
           {session ? (
             <div className={styles.navList}>
@@ -68,16 +73,6 @@ export default function Feed({
         </div>
       </div>
       <div className={styles.feed}>
-        {/* {loginError && (
-          <LoginModal
-            isOpen={true}
-            session={session}
-            onClose={() => router.replace("/")}
-            twitterClientId={twitterClientId}
-            twitterClientSecret={twitterClientSecret}
-            twitterRedirectUri={twitterRedirectUri}
-          />
-        )} */}
         <InfiniteScroll
           dataLength={tweets.length}
           next={fetchMore}
