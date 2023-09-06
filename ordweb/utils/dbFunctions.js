@@ -29,7 +29,7 @@ export async function getTweets(page = 1, limit = 50) {
 
 export async function addResponse({ parent, user, operation, content = null, media = null }) {
   try {
-    console.log(parent,' ', user,' ', operation);
+    //console.log('parent=',parent,' user=', user,' operation=', operation);
     const query = `
       INSERT INTO responses (parent, address, operation, content, media)
       VALUES ($1, $2, $3, $4, $5)
@@ -38,7 +38,7 @@ export async function addResponse({ parent, user, operation, content = null, med
     
     const values = [parent, user, operation, content , media ];
     
-    console.log('query and values=', query, ' ', values);
+    //console.log('query and values=', query, ' ', values);
  
     const client = await pool.connect();
     const result = await client.query(query, values);
@@ -90,7 +90,8 @@ export async function getTweetState(inscriptionId, user) {
     	(SELECT id FROM responses WHERE parent = $1 AND operation = 'bookmark' AND address = $2 ORDER BY id LIMIT 1) AS userBookmarkedId;
     `;
     const result = await client.query(query, [inscriptionId, user]);
-    //console.log('query= ', query);
+    //console.log(`query= ${query}`);
+    console.log(`inscriptionId= ${inscriptionId} user = ${user}`);
     client.release();
     return result.rows;
   } catch (error) {

@@ -25,3 +25,55 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.commentInput {
+  display: flex;
+  align-items: flex-start;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.commentTextArea {
+  flex-grow: 1;
+  padding: 5px;
+  border: none;   
+  outline: none;
+  resize: vertical;
+}
+
+.textarea-container textarea {
+  /* Styles for the textarea */
+  width: 100%;
+  padding: 10px;
+}
+
+.replyTextarea {
+  width: 100%;
+  padding: 10px;
+  /* Other styles */
+}
+
+.customTextarea {
+  width: 100%;
+  padding: 10px;
+  /* Other styles */
+}
+
+.container {
+  display: flex;
+/* flex-flow: row nowrap; */
+  flex-direction: row; 
+}
+
+.mainContent {
+ padding: 10px;  
+}

@@ -1,0 +1,12 @@
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" height="500" width="500" viewBox="0 0 500 500">
+  <defs>
+    <linearGradient xlink:href="#gradient-3" gradientTransform="matrix(1, 0, 0, 1, 0, 0)" y2="505.543" x2="252.494" y1="-2.772" x1="252.494" gradientUnits="userSpaceOnUse" id="gradient-3-0"></linearGradient>
+    <linearGradient id="gradient-3">
+      <stop style="stop-color: #00bfc7;" offset="0.35"></stop>
+      <stop style="stop-color:#9c57c9;" offset="1"></stop>
+    </linearGradient>
+    <linearGradient xlink:href="#gradient-3" y2="505.543" x2="252.494" y1="-2.772" x1="252.494" gradientUnits="userSpaceOnUse" id="gradient-3-1"></linearGradient>
+  </defs>
+  <rect style="fill: url(#gradient-3-0); stroke: url(#gradient-3-1);" height="508.315" width="507.206" y="-2.772" x="-1.109"></rect>
+  <text y="55%" x="50%" text-anchor="middle" style="fill: rgb(255, 255, 255); font-family: Arial, sans-serif; font-size: 70px; letter-spacing:3px;white-space: pre;text-align:center;width:100%">ChatGPT</text>
+</svg>
