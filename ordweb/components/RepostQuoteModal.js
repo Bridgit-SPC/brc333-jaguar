@@ -1,11 +1,41 @@
 import React, { useState, useEffect, useRef } from "react";
-import styles from "./RepostQuoteModal.module.css"; 
+import styles from "./RepostQuoteModal.module.css";
 import axios from "axios";
 
-export const RepostQuoteModal = ({ onClose, buttonPosition, userReposted, twitterHandle, inscriptionid, quotedInscriptionContent }) => {
+export const RepostQuoteModal = ({
+  onClose,
+  buttonPosition,
+  posted,
+  twitterHandle,
+  inscriptionid,
+  quotedInscriptionContent,
+  reposts,
+  quoteModalOpen,
+  setQuoteModalOpen,
+}) => {
+  const [repostsCount, setRepostsCount] = useState(reposts);
+  const [userReposted, setUserReposted] = useState(posted);
   const modalRef = useRef(null);
-  const [repostQuoteModalOpen, setRepostQuoteModalOpen] = useState(false);
-  console.log("buttonPosition:", buttonPosition); 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    const updateModalPosition = () => {
+      const buttonPosition = modalRef.current.getBoundingClientRect();
+      const newTop = buttonPosition.top + window.scrollY - 30 + "px";
+      setModalPosition((prevPosition) => ({
+        ...prevPosition,
+        top: newTop,
+      }));
+    };
+
+    window.addEventListener("scroll", updateModalPosition);
+    updateModalPosition();
+
+    return () => {
+      window.removeEventListener("scroll", updateModalPosition);
+    };
+  }, []);
 
   const handleRepostOption = async () => {
     if (!userReposted) {
@@ -16,7 +46,7 @@ export const RepostQuoteModal = ({ onClose, buttonPosition, userReposted, twitte
         console.log('repostsCount (before setRepostsCount) =', repostsCount);
         setRepostsCount(repostsCount + 1);
         console.log('repostsCount (after setRepostsCount)=', repostsCount);
-        setUserReposted(true);
+        setUserReposted(posted); // Update userReposted state using the posted prop
       } catch (error) {
         console.error("Error reposting tweet:", error);
       }
@@ -26,47 +56,53 @@ export const RepostQuoteModal = ({ onClose, buttonPosition, userReposted, twitte
           .delete(`/api/removeResponse`, { data: { interactionId: userRepostedId } })
           .then((response) => {
             // Update repostsCount and userReposted states based on the server response
-            setRepostsCount(repostsCount-1);
+            setRepostsCount(repostsCount - 1);
             setUserReposted(false);
           })
           .catch((error) => {
             console.error("Error reposting tweet:", error);
           });
     }
+    setModalOpen(false);
     onClose();
   };
 
   const handleQuoteOption = () => {
-    // Handle Quote logic here
-    // Close the modal after quoting
+    console.log('handleQuoteOption'); 
+    setQuoteModalOpen(true);
+    setModalOpen(false);
     onClose();
   };
 
+  console.log('before modalStyle');
   const modalStyle = {
-    top: buttonPosition?.top + window.scrollY - 30 + "px",
-    left: buttonPosition?.left -30 + "px",
+    top: buttonPosition?.top - window.scrollY - 40 + "px",
+    left: buttonPosition?.left - 55 + "px",
   };
 
-const handleOutsideClick = (e) => {
-  // Check if the click occurred outside of the modal content
-  if (repostQuoteModalOpen && modalRef.current && !modalRef.current.contains(e.target)) {
-    onClose(); // Close the modal
-  }
-};
-
-useEffect(() => {
-  // Add the event listener when the component mounts
-  document.addEventListener('click', handleOutsideClick);
-
-  // Clean up the event listener when the component unmounts
-  return () => {
-    document.removeEventListener('click', handleOutsideClick);
+  const handleOutsideClick = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      console.log('e.target', e.target);
+      onClose();
+    }
   };
-}, [repostQuoteModalOpen, onClose]);
 
-  console.log("modalStyle:", modalStyle); // Add this log statement
+  useEffect(() => { 
+    console.log('changed - modalOpen=', modalOpen);
+    if ( modalOpen ) {
+      document.addEventListener("click", handleOutsideClick);
+      console.log('opening listener');
+    } else {
+      document.removeEventListener("click", handleOutsideClick);
+      console.log('removing listener - modalOpen=', modalOpen);
+    }
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+      console.log('removing on return');
+    };
+  }, [modalOpen, onClose]);
 
-return (
+  return (
     <div
       ref={modalRef}
       className={`${styles["repost-quote-modal"]} ${
@@ -75,23 +111,11 @@ return (
       style={modalStyle}
     >
       <div className={styles["modal-content"]}>
-          <button onClick={handleRepostOption}>Repost</button><br></br>
-          <button onClick={handleQuoteOption}>Quote</button>
+        <button onClick={handleRepostOption}>Repost</button>
+        <br />
+        <button onClick={handleQuoteOption}>Quote</button>
       </div>
     </div>
-  ); 
-
-  {quoteModalOpen && (
-    <QuoteModal
-      isOpen={quoteModalOpen}
-      onClose={() => setQuoteModalOpen(false)}
-      inscriptionid={inscriptionid}
-      quotedInscriptionContent={quotedInscriptionContent}
-      twitterHandle={twitterHandle}
-    />
-  )}
+  );
 };
-
-
-
 

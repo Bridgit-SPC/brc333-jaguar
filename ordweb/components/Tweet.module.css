@@ -15,6 +15,29 @@
   color: #888;
 }
 
+.tweet-controller {
+    display: inline-block;
+/*  display: flex;
+    align-items: center; 
+    gap: 10px;  */
+}
+
+.number {
+  font-weight: bold;
+  font-size: 16px;  
+  color: black; 
+}
+
+.genesisAddress {
+  font-size: 10px;  
+  color: gray; 
+}
+
+.elapsedTime {
+  font-size: 10px;  
+  color: gray; 
+}
+
 .content {
   font-size: 16px;
 }
@@ -34,3 +57,38 @@
   height: auto;
 }
 
+.action-icons {
+  display: flex;
+  align-items: center; /* Vertically align icons and counts */
+  gap: 16px; /* Adjust the gap between icons and counts */
+}
+
+.action-icons button {
+  display: flex;
+  align-items: center; /* Vertically align icon and count within the button */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.action-icons img {
+  width: 15px; /* Adjust the icon size as needed */
+  height: 15px;
+  margin-right: 4px; /* Adjust the spacing between icon and count */
+}
+
+.action-icons p {
+  margin: 0; /* Remove margin to ensure counts align properly */
+  font-size: 12px; /* Adjust the font size as needed */
+}
+
+.textStyles {
+  font-size: 10px;
+  color: black;
+}
+
+.jsonStyles {
+  font-size: 10px;
+  color: gray;
+}

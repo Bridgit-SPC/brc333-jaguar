@@ -1,20 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import "../styles/reply-modal.css";
 import { ReplyModal } from "./ReplyModal";
-import { QuoteModal } from "./QuoteModal";
-import { RepostQuoteModal } from "./RepostQuoteModal";
 import { getSession, signIn, signOut, useSession } from "next-auth/react";
+import ParentComponent from './ParentComponent';
+import moment from 'moment-timezone';
+import convertElapsedTime from '../utils/datetimeUtils';
+import styles from './Tweet.module.css'; 
 let user;
 
 export function Tweet({
   inscriptionid,
   genesis_address,
+  timestamp,
   number,
   twitterClientId,
   twitterClientSecret,
   twitterRedirectUri,
 }) {
+
   const [repostButtonPosition, setRepostButtonPosition] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [loginError, setLoginError] = useState(false);
@@ -36,8 +39,11 @@ export function Tweet({
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [clickedButton, setClickedButton] = useState(null);
   const [buttonPosition, setButtonPosition] = useState(null);
+  //const [elapsedTime, setElapsedTime] = useState();
   const buttonRef = useRef(null); 
   const { data: session } = useSession();
+  const elapsedTime = convertElapsedTime(timestamp);
+  const inscriptionNumber = number;
 
   useEffect(() => {
     if (session) {
@@ -45,7 +51,7 @@ export function Tweet({
       if (session.user.name) {
 	const usernameMatch = session.user.name.match(/\(([^)]+)\)/); 
       	const twitterUsername = usernameMatch ? usernameMatch[1].toLowerCase() : '';
-        console.log('twitterHan=',twitterUsername); 
+        console.log('twitterUsername=',twitterUsername); 
         setTwitterHandle(twitterUsername);
       }
     } else {
@@ -67,8 +73,9 @@ export function Tweet({
   }, [inscriptionid]);
 
   useEffect(() => {
+    //console.log('twitterHandle=',twitterHandle);
     axios
-      .get(`/api/tweet-state?id=${inscriptionid}&user=${user || "unknown"}`)
+      .get(`/api/tweet-state?id=${inscriptionid}&user=${twitterHandle || "unknown"}`)
       .then((response) => {
          const tweetState = response.data.tweetState[0];
          console.log('tweetState=',tweetState);
@@ -86,7 +93,7 @@ export function Tweet({
       .catch((error) => {
         console.error("Error fetching user state and counts:", error);
       });
-  }, [inscriptionid, twitterClientId, twitterClientSecret, twitterRedirectUri]);
+  }, [inscriptionid, twitterClientId, twitterHandle, twitterRedirectUri]);
 
   const handleLikeClick = async () => {
     //console.log("loggedIn=", loggedIn);
@@ -97,12 +104,11 @@ export function Tweet({
      } else {
       if (!userLiked) {
         try {
-          console.log('twitterHandle at handleLike=',twitterHandle);
-          console.log('inscriptionid=',inscriptionid);
+          //console.log('twitterHandle at handleLike=',twitterHandle);
+          //console.log('inscriptionid=',inscriptionid);
           const response = await axios.post(`/api/like`, { inscriptionid, user: twitterHandle });
-          console.log('likesCount (before setLikesCount) =',likesCount);
-          setLikesCount(likesCount + 1);
-          console.log('likesCount (after setLikesCount)=',likesCount);
+          //setLikesCount(likesCount + 1);
+          setLikesCount((prevLikesCount) => prevLikesCount + 1);
           setUserLiked(true);
         } catch (error) {
           console.error("Error liking tweet:", error);
@@ -113,7 +119,8 @@ export function Tweet({
           .delete(`/api/removeResponse`, { data: { interactionId: userLikedId } })
           .then((response) => {
             // Update likesCount and userLiked states based on the server response
-            setLikesCount(likesCount-1);
+	    setLikesCount((prevLikesCount) => prevLikesCount - 1);
+            //setLikesCount(likesCount-1);
             setUserLiked(false);
           })
           .catch((error) => {
@@ -123,6 +130,9 @@ export function Tweet({
     }
   };
 
+  useEffect(() => {
+  }, [likesCount, userLiked, repostsCount, userReposted, bookmarksCount, userBookmarked, repliesCount]);
+
   // Handle reply button click
   const handleReplyClick = () => {
     if (!loggedIn) {
@@ -131,6 +141,9 @@ export function Tweet({
       setReplyModalOpen(true);
     }
   };
+
+  useEffect(() => {
+  }, [likesCount, userLiked]);
 
   // Handle repost button click
   const handleRepostClick = (e) => {
@@ -143,14 +156,14 @@ export function Tweet({
       };
       setButtonPosition(buttonPosition); 
       setRepostQuoteModalOpen(true); 
-      //console.log('repostQuoteModalOpen=',repostQuoteModalOpen);
+      console.log('Setting repostQuoteModalOpen=', repostQuoteModalOpen);
     }   
   };
 
   const renderContent = () => {
     if (typeof content === "string") {
       // If content is plain text
-      return <p>{content}</p>;
+      return <p className={styles.textStyles}>{content}</p>;
     } else if (typeof content === "object" && content.type === "image") {
       // If content is an image
       return <img src={content.url} alt="Content" />;
@@ -167,45 +180,43 @@ export function Tweet({
       return <div dangerouslySetInnerHTML={{ __html: content.html }} />;
     } else {
       // For other types of content or objects, you can display the JSON representation
-      return <pre>{JSON.stringify(content, null, 2)}</pre>;
+      return <pre className={styles.jsonStyles}>{JSON.stringify(content, null, 2)}</pre>;
     }
   };
 
-  return (
-    <div className="tweet">
-      <div className="tweet-controller">
-        <span> number={number}</span>
-        <span>{genesis_address}</span>
+  //console.log('repostQuoteModalOpen=', repostQuoteModalOpen);
 
+  return (
+    <div className={styles["tweet"]}>
+      <div className={styles["tweet-controller"]}>
+        <div className={styles["number"]}>{number}</div>
+        <div className={styles["genesisAddress"]}>{genesis_address}</div>
+        <div className={styles["elapsedTime"]}>{elapsedTime}</div>
+      </div>
         {renderContent()}
 
-        <div className="flex">
-          <div>
-            <button onClick={handleLikeClick}>
-              <img
-                src={userLiked ? "/images/like-active.png" : "/images/like.png"}
-                alt="Like"
-              />
-            </button>
-            <p>{likesCount} Likes</p>
-          </div>
-          <div>
-            <button onClick={(e) => handleRepostClick(e)}>
-              <img
-                src={
-                  userReposted
-                    ? "/images/repost-active.png"
-                    : "/images/repost.png"
-                }
-                alt="Repost"
-              />
-            </button>
-            <p>{repostsCount} Reposts</p>
-          </div>
-          <div>
-            <button onClick={handleReplyClick}>Reply</button>
-          </div>
-        </div>
+    <div className={styles["action-icons"]}>
+      <button onClick={handleReplyClick}>
+         <img src="/images/reply.png" alt="Reply" />
+         <p>{repliesCount}</p>
+      </button>
+      <button onClick={handleLikeClick}>
+         <img
+           src={userLiked ? "/images/like-active.png" : "/images/like.png"}
+           alt="Like"
+         />
+         <p>{likesCount}</p>
+      </button>
+      <button onClick={(e) => handleRepostClick(e)}>
+         <img
+           src={
+           userReposted ? "/images/repost-active.png" : "/images/repost.png"
+           }
+           alt="Repost"
+         />
+        <p>{repostsCount}</p>
+      </button>
+     </div>
 
         {replyModalOpen && (
           <ReplyModal
@@ -214,21 +225,27 @@ export function Tweet({
             twitterHandle={twitterHandle}
             inscriptionid={inscriptionid}
             quotedInscriptionContent={renderContent()}
+            inscriptor={genesis_address}
+            elapsedTime={elapsedTime}
+            inscriptionNumber={number}
           />
         )}
 
         {repostQuoteModalOpen && (
-          <RepostQuoteModal
-            onClose={() => setRepostQuoteModalOpen(false)}
-            buttonPosition={buttonPosition}
-            userReposted={userReposted}
-            twitterHandle={twitterHandle}
-            inscriptionid={inscriptionid}
-            quotedInscriptionContent={renderContent()}
-          />
-        )}
-
-      </div>
+  	  <ParentComponent
+    	    onClose={() => setRepostQuoteModalOpen(false)}
+    	    buttonPosition={buttonPosition}
+    	    reposted={userReposted}
+    	    twitterHandle={twitterHandle}
+    	    inscriptionid={inscriptionid}
+    	    quotedInscriptionContent={renderContent()}
+    	    reposts={repostsCount}
+            inscriptor={genesis_address}
+            elapsedTime={elapsedTime}
+            inscriptionNumber={number}
+  	  />
+	)}
     </div>
   );
 }
+

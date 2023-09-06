@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Tweet } from "../components/Tweet";
+import Sidebar from "../components/Sidebar";
 import axios from "axios"; // Import Axios
 import styles from "./styles.module.css";
 import { useRouter } from "next/router";
@@ -33,45 +34,51 @@ export default function Feed({
         `http://localhost:3000/api/tweets?page=${page}`,
       );
       const moreTweets = response.data.tweets;
-      setPage(page + 1);
-      setTweets((prevTweets) => [...prevTweets, ...moreTweets]);
+
+      if (Array.isArray(moreTweets)) {
+         setTweets((prevTweets) => [...prevTweets, ...moreTweets]);
+         setPage(page + 1);
+      } else {
+         console.error("Error: moreTweets is not an array");
+      }
     } catch (error) {
       console.error("Error fetching more tweets:", error);
     }
   };
   const { data: session } = useSession();
   return (
-    <>
-      <div className={styles.nav}>
-        <div className={styles.navList}>
-          <a class={styles.active} href="#home">
-            Home
-          </a>
-          <a href="#news">News</a>
-          <a href="#contact">Contact</a>
-          <a href="#about">Teweets</a>
-        </div>
 
+  <div className={styles.container}>
+    <div className={styles.sidebar}>
+      <Sidebar />
+    </div>
+    <div className={styles.mainContent}>
+
+      <div className={styles.topRow}>
+        <input
+          type="text"
+          placeholder="Enter URL"
+          className={styles.urlInput}
+        />
         {hasLoginError && (
           <div>
-          <p>Authentication failed. Please click the button below to sign in.</p>
-          <button onClick={() => signIn()}>Sign in</button>
+            <p>
+              Authentication failed. Please click the button below to sign in.
+            </p>
+           <button onClick={() => signIn()}>Sign in</button>
           </div>
         )}
 
-        <div className={styles.navList}>
-          {session ? (
-            <div className={styles.navList}>
-              <img src={session.user.image} className={styles.avtar} /> <br />
-              <button onClick={() => signOut()}>Sign out</button>
-            </div>
-          ) : (
-            <>
-              <button onClick={() => signIn()}>Sign in</button>
-            </>
-          )}
-        </div>
+        {session ? (
+          <div className={styles.userNav}>
+            <img src={session.user.image} className={styles.avatar} /> <br />
+            <button onClick={() => signOut()}>Sign out</button>
+          </div>
+        ) : (
+          <button onClick={() => signIn()}>Sign in</button>
+        )}
       </div>
+
       <div className={styles.feed}>
         <InfiniteScroll
           dataLength={tweets.length}
@@ -81,23 +88,26 @@ export default function Feed({
         >
           {tweets.map((tweet) => {
             return (
-              <Tweet
-                key={tweet.inscriptionid}
-                genesis_address={tweet.genesis_address}
-                inscriptionid={tweet.inscriptionid}
-                number={tweet.number}
-                twitterHandle={twitterHandle}
-                twitterClientId={twitterClientId}
-                twitterClientSecret={twitterClientSecret}
-                twitterRedirectUri={twitterRedirectUri}
-              />
-            );
+            <Tweet
+              key={tweet.inscriptionid}
+              genesis_address={tweet.genesis_address}
+              timestamp={tweet.timestamp}
+              inscriptionid={tweet.inscriptionid}
+              number={tweet.number}
+              twitterHandle={twitterHandle}
+              twitterClientId={twitterClientId}
+              twitterClientSecret={twitterClientSecret}
+              twitterRedirectUri={twitterRedirectUri}
+            />
+          );
           })}
         </InfiniteScroll>
       </div>
-    </>
+    </div>
+  </div>   
   );
-}
+}   
+
 
 export async function getServerSideProps(context) {
   try {
@@ -106,7 +116,7 @@ export async function getServerSideProps(context) {
     const twitterClientId = process.env.TWITTER_CLIENT_ID;
     const twitterClientSecret = process.env.TWITTER_CLIENT_SECRET;
     const twitterRedirectUri =
-      process.env.BASE_URL + process.env.TWITTER_REDIRECT_URI;
+       process.env.BASE_URL + process.env.TWITTER_REDIRECT_URI;
     const session = await getSession(context);
     return {
       props: {

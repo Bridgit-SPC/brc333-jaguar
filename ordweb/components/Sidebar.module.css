@@ -1,59 +1,36 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  display: flex;
-}
-
-.header {
-  background-color: #1da1f2;
-  color: white;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-}
-
-.logo img {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
-}
-
-.logo-text {
-  font-size: 1.2rem;
+.container {
+  display: flex; /* Use Flexbox */
+  justify-content: flex-start; /* Align items to the start (left side) */
+  align-items: flex-start; /* Align items to the start (top) */
+  padding-left: 40px; /* Add padding to the left for the Sidebar */
 }
 
 .sidebar {
-  background-color: #333;
-  color: white;
-  width: 200px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
+  flex: 1; /* Allow the sidebar to take up one-third of the container */
+  padding: 16px; /* Add padding to the left side */
+}
+
+.rightColumn {
+  flex: 2; /* Allow the right column to take up two-thirds of the container */
 }
 
 .sidebar-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
+  display: flex; /* Use flexbox for items */
+  align-items: left; /* Center items horizontally */
+  margin-bottom: 10px; /* Add some spacing between items */
 }
 
 .sidebar-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
+  width: 18px; /* Set the width of your icons */
+  height: 18px; /* Set the height of your icons */
+  margin-right: 10px; /* Add some spacing between icon and text */
 }
 
 .sidebar-text {
-  font-size: 1rem;
+  font-size: 14px; /* Adjust the font size as needed */
 }
 
-.content {
-  flex: 1;
-  padding: 20px;
+.logo-text {
+  font-size: 14px; /* Adjust the font size as needed */
+  font-weight: bold;
 }
-

@@ -1,24 +1,141 @@
+/* Common styles for both modals */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.modal.open {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalContent {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #fff; 
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.user {
+  font-weight: bold;
+  margin-right: 8px;
+  color: #333; /* Dark gray color for user's name */
+}
+
+.inscriptionid {
+  color: #888; 
+}
+
+.inscriptionNumber {
+  color: #888;
+}
+
+.closeButton {
+  position: absolute;
+  top: 40px;
+  right: 15px;
+  font-size: 40px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+
+.quoteHeader {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  background-color: lightgray;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.quotedInscription {
+  max-width: 100%; /* Adjust this value as needed */
+  word-wrap: break-word; /* Prevent long words from overflowing */
+  overflow-wrap: break-word; /* Prevent long words from overflowing (for Firefox) */
+}
+
+.quoteForm {
+  margin-bottom: 20px;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  background-color: lightgray;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.postButton {
+  background-color: #1da1f2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.inscriptor {
+  font-weight: bold;
+  margin-right: 8px;  
+  color: #333; /* Dark gray color for user's name */
+}
+
+.elapsedTime {
+  font-weight: bold;
+  margin-right: 8px;  
+  color: #333; /* Dark gray color for user's name */
+}
+
 .repost-quote-modal {
   position: fixed;
+  z-index: 1000;
   background-color: transparent;
-  border: 1px solid #ccc;
   padding: 16px;
-  z-index: 1000; /* Adjust the z-index as needed */
-  top: 0; /* Start at the top */
-  left: 0; /* Start at the left */
-  transition: top 0.3s ease, left 0.3s ease;
+  overflow: auto; 
 }
 
-/* Style for the highlighted row */
+/* Style for the highlighted row 
 .repost-quote-modal.highlighted-row {
   background-color: #f5f5f5;
-}
+  z-index: 1005;
+}  */
 
 /* Style for the modal content */
-.modal-content {
+.repost-quote-modal .modal-content {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  max-height: 80vh; 
+  overflow-y: auto; 
 }
 
+.reply-modal-content {
+  max-width: 100%; /* Adjust this value as needed */
+  word-wrap: break-word; /* Prevent long words from overflowing */
+  overflow-wrap: break-word; /* Prevent long words from overflowing (for Firefox) */
+}
