@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 //import Head from 'next/head';
-import Header from '../components/Header';
+import Header from "../components/Header";
 //import Sidebar from '../components/Sidebar';
 //import Tabs from '../components/Tabs';
 //import UserProfile from '../components/UserProfile';
@@ -19,12 +19,12 @@ function HomePage() {
       <div className="main-container">
         <Sidebar />
         <div className="feed">
-          <FeedContent 
-           initialTweets, 
-           twitterClientId, 
-           twitterClientSecret,
-           twitterRedirectUri 
-          /> 
+          <FeedContent
+            initialTweets
+            twitterClientId
+            twitterClientSecret
+            twitterRedirectUri
+          />
         </div>
         <Tabs />
       </div>
@@ -39,12 +39,12 @@ function HomePage() {
 
 export async function getServerSideProps() {
   try {
-    const response = await axios.get('http://localhost:3000/api/tweets');
+    const response = await axios.get("http://localhost:3000/api/tweets");
     const initialTweets = response.data.inscriptions;
-    const twitterClientId = process.env.TWITTER_CLIENT_ID; 
-    const twitterClientSecret = process.env.TWITTER_CLIENT_SECRET;   
-    const twitterRedirectUri = process.env.BASE_URL + process.env.TWITTER_REDIRECT_URI; 
-
+    const twitterClientId = process.env.TWITTER_CLIENT_ID;
+    const twitterClientSecret = process.env.TWITTER_CLIENT_SECRET;
+    const twitterRedirectUri =
+      process.env.BASE_URL + process.env.TWITTER_REDIRECT_URI;
 
     return {
       props: {
@@ -55,7 +55,9 @@ export async function getServerSideProps() {
       },
     };
   } catch (error) {
-    console.error('Error fetching initial tweets:', error);
-    return { props: { initialTweets: [], twitterClientId: '', twitterRedirectUri: '' } };
+    console.error("Error fetching initial tweets:", error);
+    return {
+      props: { initialTweets: [], twitterClientId: "", twitterRedirectUri: "" },
+    };
   }
 }

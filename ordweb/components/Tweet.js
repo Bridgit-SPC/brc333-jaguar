@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { ReplyModal } from "./ReplyModal";
 import { getSession, signIn, signOut, useSession } from "next-auth/react";
-import ParentComponent from './ParentComponent';
-import moment from 'moment-timezone';
-import convertElapsedTime from '../utils/datetimeUtils';
-import styles from './Tweet.module.css'; 
+import ParentComponent from "./ParentComponent";
+import moment from "moment-timezone";
+import convertElapsedTime from "../utils/datetimeUtils";
+import styles from "./Tweet.module.css";
 let user;
 
 export function Tweet({
@@ -17,7 +17,6 @@ export function Tweet({
   twitterClientSecret,
   twitterRedirectUri,
 }) {
-
   const [repostButtonPosition, setRepostButtonPosition] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [loginError, setLoginError] = useState(false);
@@ -34,29 +33,47 @@ export function Tweet({
   const [userLikedId, setUserLikedId] = useState(false);
   const [userBookmarkedId, setUserBookmarkedId] = useState(false);
   const [userRepostedId, setUserRepostedId] = useState(false);
-  const [twitterHandle, setTwitterHandle] = useState('');
+  const [twitterHandle, setTwitterHandle] = useState("");
   const [repostQuoteModalOpen, setRepostQuoteModalOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [clickedButton, setClickedButton] = useState(null);
   const [buttonPosition, setButtonPosition] = useState(null);
   //const [elapsedTime, setElapsedTime] = useState();
-  const buttonRef = useRef(null); 
+  const buttonRef = useRef(null);
   const { data: session } = useSession();
   const elapsedTime = convertElapsedTime(timestamp);
   const inscriptionNumber = number;
+
+  const tableRef = useRef(null);
+  function useOutsideAlerter(ref, setRepostQuoteModalOpen) {
+    useEffect(() => {
+      function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setRepostQuoteModalOpen(false);
+        }
+      }
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [tableRef, setRepostQuoteModalOpen]);
+  }
+  useOutsideAlerter(tableRef, setRepostQuoteModalOpen);
 
   useEffect(() => {
     if (session) {
       setLoggedIn(true);
       if (session.user.name) {
-	const usernameMatch = session.user.name.match(/\(([^)]+)\)/); 
-      	const twitterUsername = usernameMatch ? usernameMatch[1].toLowerCase() : '';
-        console.log('twitterUsername=',twitterUsername); 
+        const usernameMatch = session.user.name.match(/\(([^)]+)\)/);
+        const twitterUsername = usernameMatch
+          ? usernameMatch[1].toLowerCase()
+          : "";
+        console.log("twitterUsername=", twitterUsername);
         setTwitterHandle(twitterUsername);
       }
     } else {
       setLoggedIn(false);
-      setTwitterHandle(''); 
+      setTwitterHandle("");
     }
   }, [session]);
 
@@ -75,20 +92,24 @@ export function Tweet({
   useEffect(() => {
     //console.log('twitterHandle=',twitterHandle);
     axios
-      .get(`/api/tweet-state?id=${inscriptionid}&user=${twitterHandle || "unknown"}`)
+      .get(
+        `/api/tweet-state?id=${inscriptionid}&user=${
+          twitterHandle || "unknown"
+        }`
+      )
       .then((response) => {
-         const tweetState = response.data.tweetState[0];
-         console.log('tweetState=',tweetState);
-         setUserLiked(tweetState.userliked);
-         setUserReposted(tweetState.userreposted);
-         setUserBookmarked(tweetState.userbookmarked);
-         setLikesCount(parseInt(tweetState.likescount)); 
-         setRepostsCount(parseInt(tweetState.repostscount)); 
-         setRepliesCount(parseInt(tweetState.repliescount)); 
-         setBookmarksCount(parseInt(tweetState.bookmarkscount));
-         setUserLikedId(tweetState.userlikedid);
-         setUserRepostedId(tweetState.userrepostedid); 
-	 setUserBookmarkedId(tweetState.userbookmarkedid);  
+        const tweetState = response.data.tweetState[0];
+        console.log("tweetState=", tweetState);
+        setUserLiked(tweetState.userliked);
+        setUserReposted(tweetState.userreposted);
+        setUserBookmarked(tweetState.userbookmarked);
+        setLikesCount(parseInt(tweetState.likescount));
+        setRepostsCount(parseInt(tweetState.repostscount));
+        setRepliesCount(parseInt(tweetState.repliescount));
+        setBookmarksCount(parseInt(tweetState.bookmarkscount));
+        setUserLikedId(tweetState.userlikedid);
+        setUserRepostedId(tweetState.userrepostedid);
+        setUserBookmarkedId(tweetState.userbookmarkedid);
       })
       .catch((error) => {
         console.error("Error fetching user state and counts:", error);
@@ -97,16 +118,19 @@ export function Tweet({
 
   const handleLikeClick = async () => {
     //console.log("loggedIn=", loggedIn);
-    console.log('likesCount (before)=',likesCount);
-    console.log('userLiked=',userLiked);
+    console.log("likesCount (before)=", likesCount);
+    console.log("userLiked=", userLiked);
     if (!loggedIn) {
-       signIn(); 
-     } else {
+      signIn();
+    } else {
       if (!userLiked) {
         try {
           //console.log('twitterHandle at handleLike=',twitterHandle);
           //console.log('inscriptionid=',inscriptionid);
-          const response = await axios.post(`/api/like`, { inscriptionid, user: twitterHandle });
+          const response = await axios.post(`/api/like`, {
+            inscriptionid,
+            user: twitterHandle,
+          });
           //setLikesCount(likesCount + 1);
           setLikesCount((prevLikesCount) => prevLikesCount + 1);
           setUserLiked(true);
@@ -116,10 +140,12 @@ export function Tweet({
       } else {
         // Send a DELETE request to remove the like
         axios
-          .delete(`/api/removeResponse`, { data: { interactionId: userLikedId } })
+          .delete(`/api/removeResponse`, {
+            data: { interactionId: userLikedId },
+          })
           .then((response) => {
             // Update likesCount and userLiked states based on the server response
-	    setLikesCount((prevLikesCount) => prevLikesCount - 1);
+            setLikesCount((prevLikesCount) => prevLikesCount - 1);
             //setLikesCount(likesCount-1);
             setUserLiked(false);
           })
@@ -130,34 +156,40 @@ export function Tweet({
     }
   };
 
-  useEffect(() => {
-  }, [likesCount, userLiked, repostsCount, userReposted, bookmarksCount, userBookmarked, repliesCount]);
+  useEffect(() => {}, [
+    likesCount,
+    userLiked,
+    repostsCount,
+    userReposted,
+    bookmarksCount,
+    userBookmarked,
+    repliesCount,
+  ]);
 
   // Handle reply button click
   const handleReplyClick = () => {
     if (!loggedIn) {
-       signIn();
+      signIn();
     } else {
       setReplyModalOpen(true);
     }
   };
 
-  useEffect(() => {
-  }, [likesCount, userLiked]);
+  useEffect(() => {}, [likesCount, userLiked]);
 
   // Handle repost button click
   const handleRepostClick = (e) => {
     if (!loggedIn) {
-       signIn();
+      signIn();
     } else {
       const buttonPosition = {
         top: e.clientY + window.scrollY,
         left: e.clientX,
       };
-      setButtonPosition(buttonPosition); 
-      setRepostQuoteModalOpen(true); 
-      console.log('Setting repostQuoteModalOpen=', repostQuoteModalOpen);
-    }   
+      setButtonPosition(buttonPosition);
+      setRepostQuoteModalOpen(true);
+      console.log("Setting repostQuoteModalOpen=", repostQuoteModalOpen);
+    }
   };
 
   const renderContent = () => {
@@ -180,7 +212,11 @@ export function Tweet({
       return <div dangerouslySetInnerHTML={{ __html: content.html }} />;
     } else {
       // For other types of content or objects, you can display the JSON representation
-      return <pre className={styles.jsonStyles}>{JSON.stringify(content, null, 2)}</pre>;
+      return (
+        <pre className={styles.jsonStyles}>
+          {JSON.stringify(content, null, 2)}
+        </pre>
+      );
     }
   };
 
@@ -193,59 +229,59 @@ export function Tweet({
         <div className={styles["genesisAddress"]}>{genesis_address}</div>
         <div className={styles["elapsedTime"]}>{elapsedTime}</div>
       </div>
-        {renderContent()}
+      {renderContent()}
 
-    <div className={styles["action-icons"]}>
-      <button onClick={handleReplyClick}>
-         <img src="/images/reply.png" alt="Reply" />
-         <p>{repliesCount}</p>
-      </button>
-      <button onClick={handleLikeClick}>
-         <img
-           src={userLiked ? "/images/like-active.png" : "/images/like.png"}
-           alt="Like"
-         />
-         <p>{likesCount}</p>
-      </button>
-      <button onClick={(e) => handleRepostClick(e)}>
-         <img
-           src={
-           userReposted ? "/images/repost-active.png" : "/images/repost.png"
-           }
-           alt="Repost"
-         />
-        <p>{repostsCount}</p>
-      </button>
-     </div>
-
-        {replyModalOpen && (
-          <ReplyModal
-            isOpen={replyModalOpen}
-            onClose={() => setReplyModalOpen(false)}
-            twitterHandle={twitterHandle}
-            inscriptionid={inscriptionid}
-            quotedInscriptionContent={renderContent()}
-            inscriptor={genesis_address}
-            elapsedTime={elapsedTime}
-            inscriptionNumber={number}
+      <div className={styles["action-icons"]}>
+        <button onClick={handleReplyClick}>
+          <img src="/images/reply.png" alt="Reply" />
+          <p>{repliesCount}</p>
+        </button>
+        <button onClick={handleLikeClick}>
+          <img
+            src={userLiked ? "/images/like-active.png" : "/images/like.png"}
+            alt="Like"
           />
-        )}
+          <p>{likesCount}</p>
+        </button>
+        <button onClick={(e) => handleRepostClick(e)}>
+          <img
+            src={
+              userReposted ? "/images/repost-active.png" : "/images/repost.png"
+            }
+            alt="Repost"
+          />
+          <p>{repostsCount}</p>
+        </button>
+      </div>
 
-        {repostQuoteModalOpen && (
-  	  <ParentComponent
-    	    onClose={() => setRepostQuoteModalOpen(false)}
-    	    buttonPosition={buttonPosition}
-    	    reposted={userReposted}
-    	    twitterHandle={twitterHandle}
-    	    inscriptionid={inscriptionid}
-    	    quotedInscriptionContent={renderContent()}
-    	    reposts={repostsCount}
-            inscriptor={genesis_address}
-            elapsedTime={elapsedTime}
-            inscriptionNumber={number}
-  	  />
-	)}
+      {replyModalOpen && (
+        <ReplyModal
+          isOpen={replyModalOpen}
+          onClose={() => setReplyModalOpen(false)}
+          twitterHandle={twitterHandle}
+          inscriptionid={inscriptionid}
+          quotedInscriptionContent={renderContent()}
+          inscriptor={genesis_address}
+          elapsedTime={elapsedTime}
+          inscriptionNumber={number}
+        />
+      )}
+
+      {repostQuoteModalOpen && (
+        <ParentComponent
+          tableRef={tableRef}
+          onClose={() => setRepostQuoteModalOpen(false)}
+          buttonPosition={buttonPosition}
+          reposted={userReposted}
+          twitterHandle={twitterHandle}
+          inscriptionid={inscriptionid}
+          quotedInscriptionContent={renderContent()}
+          reposts={repostsCount}
+          inscriptor={genesis_address}
+          elapsedTime={elapsedTime}
+          inscriptionNumber={number}
+        />
+      )}
     </div>
   );
 }
-

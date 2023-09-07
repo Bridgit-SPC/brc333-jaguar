@@ -3,6 +3,7 @@ import { RepostQuoteModal } from "./RepostQuoteModal"; // Import RepostQuoteModa
 import { QuoteModal } from "./QuoteModal"; // Import QuoteModal
 
 function ParentComponent({
+  onClose,
   buttonPosition,
   reposted,
   twitterHandle,
@@ -11,9 +12,10 @@ function ParentComponent({
   reposts,
   inscriptor,
   elapsedTime,
+  tableRef,
 }) {
   const [repostModalOpen, setRepostModalOpen] = useState(true);
-  const [quoteModalOpen, setQuoteModalOpen] = useState(false); 
+  const [quoteModalOpen, setQuoteModalOpen] = useState(false);
   const [isInitialEffectComplete, setIsInitialEffectComplete] = useState(false);
 
   useEffect(() => {
@@ -22,7 +24,7 @@ function ParentComponent({
     }
   }, []);
 
-return (
+  return (
     <>
       {isInitialEffectComplete && repostModalOpen && (
         <RepostQuoteModal
@@ -33,19 +35,23 @@ return (
           inscriptionid={inscriptionid}
           quotedInscriptionContent={quotedInscriptionContent}
           reposts={reposts}
-          quoteModalOpen={quoteModalOpen} 
+          quoteModalOpen={quoteModalOpen}
           setQuoteModalOpen={setQuoteModalOpen}
+          tableRef={tableRef}
         />
       )}
 
       {isInitialEffectComplete && quoteModalOpen && (
         <QuoteModal
           isOpen={quoteModalOpen}
-          onClose={() => setQuoteModalOpen(false)}
+          onClose={() => {
+            setQuoteModalOpen(false);
+            onClose();
+          }}
           inscriptionid={inscriptionid}
           quotedInscriptionContent={quotedInscriptionContent}
           twitterHandle={twitterHandle}
-          inscriptor={inscriptor} 
+          inscriptor={inscriptor}
           elapsedTime={elapsedTime}
         />
       )}
@@ -54,4 +60,3 @@ return (
 }
 
 export default ParentComponent;
-

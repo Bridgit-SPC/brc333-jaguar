@@ -1,7 +1,7 @@
 /* styles.module.css */
 
 .feed {
-  max-width: 600px;
+  width: 600px;
   margin: 0 auto;
   padding: 1rem;
 }
@@ -17,11 +17,11 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  margin-right: 0.5rem; 
+  margin-right: 0.5rem;
 }
 
 .tweet-content {
-  flex: 1;  
+  flex: 1;
 }
 
 .tweet-user {
@@ -49,7 +49,7 @@
 }
 
 .load-more:hover {
-  background: lighten(#1da1f2, 10%); 
+  background: lighten(#1da1f2, 10%);
 }
 
 .nav {
@@ -65,9 +65,9 @@
 }
 
 .navList {
- display: flex;
- align-items: center;
- gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .navList a {
@@ -77,7 +77,7 @@
   padding: 14px 16px;
   text-decoration: none;
 }
-.navList button{
+.navList button {
   color: #eee;
 }
 
@@ -86,18 +86,47 @@
 }
 
 .active {
-  background-color: #04AA6D;
+  background-color: #04aa6d;
 }
-.avtar{
+.avtar {
   border-radius: 50%;
-width: 30px;
+  width: 30px;
 }
-.tweet-controller{
+.tweet-controller {
   display: flex;
   gap: 4px;
 }
-.flex{
+.flex {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.subContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.topRow {
+  margin-top: 10px;
+  gap: 10px;
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  position: fixed;
+  right: 0;
+}
+
+.urlInput {
+  height: 25px;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.mainContent {
+  margin: 0 auto;
 }
