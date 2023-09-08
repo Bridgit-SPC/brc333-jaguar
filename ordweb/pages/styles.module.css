@@ -112,14 +112,13 @@
   gap: 10px;
   align-items: center;
   display: flex;
-  justify-content: flex-end;
-  position: fixed;
-  right: 0;
-  align-self: flex-start; 
+  padding-left: 20px; 
 }
 
 .urlInput {
   height: 25px;
+  padding-left: 3px;
+  width: 100%
 }
 
 .sidebar {

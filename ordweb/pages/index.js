@@ -70,15 +70,15 @@ export default function Feed({
 
   return (
 
-  <div className={styles.container}>
+  <div className={styles.container}>  
     <div className={styles.sidebar}>
       <Sidebar 
         session={session}
         twitterDisplayName={twitterDisplayName}
         twitterHandle={twitterHandle} 
       />
-    </div>
-    <div className={styles.mainContent}>
+    </div> 
+    <div className={styles.feed}>
 
       <div className={styles.topRow}>
         <input
