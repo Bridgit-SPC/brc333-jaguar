@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Sidebar.module.css'; 
+import { getSession, signIn, signOut, useSession } from "next-auth/react";
 
 function Sidebar({session, twitterDisplayName, twitterHandle}) {
   return (
