@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:bridge="https://ordinals.market/bridge"
+     viewBox="0 0 1024 1024">
+  <image bridge:p="teleburn-1155"
+         bridge:contract="0xad3dec7a8470d537d30d5a91579f10aaacf68c28"
+         bridge:token-id="10"
+         bridge:quantity="1"
+         width="1024"
+         height="1024"
+         href="/content/b0a9a22250f4e4ee8e9f939b741b716f43292956c0b50e5eab596d300d76562bi0"/>
+</svg>

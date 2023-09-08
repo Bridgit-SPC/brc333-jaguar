@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="clock" width="400" height="400">
+	<circle cx="200" cy="200" r="200" style="fill:#000" />
+	<circle cx="200" cy="200" r="201" style="fill:#fff" />
+	<path stroke="#000" stroke-dasharray="5, 89.24778" stroke-width="35" d="M200 20a180 180-90 1 1-1 0M200 380a180 180 90 1 0-1 0" style="fill:none" />
+	<circle cx="200" cy="200" r="10" style="fill:#000" />
+	<path id="minuteHand" stroke="#000" stroke-dasharray="130, 130" stroke-width="5" d="M200 70v260" />
+	<path id="hourHand" stroke="#000" stroke-dasharray="100, 100" stroke-width="10" d="M200 100v200" />
+	<path id="secondHand" stroke="red" stroke-dasharray="160, 160" stroke-width="2.5" d="M200 40v320" />
+	<circle cx="200" cy="200" r="3" style="fill:red" />
+	<script type="application/ecmascript">
+		<![CDATA[
+		function updateClock() {
+		const now = new Date();
+		const seconds = now.getSeconds();
+		const minutes = now.getMinutes() + seconds / 60;
+		const hours = now.getHours() % 12 + minutes / 60;
+		
+		const hourHand = document.getElementById('hourHand');
+		const minuteHand = document.getElementById('minuteHand');
+		const secondHand = document.getElementById('secondHand');
+		
+		hourHand.setAttribute('transform', `rotate(${hours / 12 * 360} 200 200)`);
+		minuteHand.setAttribute('transform', `rotate(${minutes / 60 * 360} 200 200)`);
+		secondHand.setAttribute('transform', `rotate(${seconds / 60 * 360} 200 200)`);
+		}
+		
+		updateClock();
+		setInterval(updateClock, 1000);
+		]]>
+	</script>
+</svg>

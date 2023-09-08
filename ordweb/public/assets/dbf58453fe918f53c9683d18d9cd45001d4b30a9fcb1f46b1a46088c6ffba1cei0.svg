@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  
+<body>
+    <svg width="575" height="575">
+        <defs>
+            <filter id="id_1">
+                <feImage xlink:href= "/content/783513f2044d48fdf303e58b1d8878a2394a695e2a9cac320c4823f09524a296i0" />
+            </filter>
+        </defs>
+  
+        <g>
+            <rect x="1" y="1" width="575" 
+                height="575" fill="orange" 
+                stroke="orange" />
+  
+            <rect x="50" y="25" width="575" 
+                height="575" 
+                filter="url(#id_1)" />
+        </g>
+    </svg>
+</body>
+  
+</html>

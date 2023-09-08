@@ -1,0 +1,45 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  data-clct="doodinals"
+  version="1.1"
+  width="100%"
+  height="100%"
+  style="background-color: rgb(246, 147, 26);"
+  viewBox="0 0 600 600"
+  preserveAspectRatio="xMidYMid meet"
+>
+  <g transform=" translate(199.92578125,231.02343750000006)">
+    <image
+      width="205.3125"
+      height="200.7578125"
+      href="/content/7326429dd2bb630d7333f06a9ce62c359c73feec544f3254d04904897f17dedci0"
+      style="image-rendering: pixelated;"
+    />
+  </g>
+  <g
+    transform="rotate(29.434969826829853, 319.3359375 274.36328124999994) translate(227.67688960340155,202.7678806469678)"
+  >
+    <image
+      width="183.3180957931969"
+      height="143.19080120606432"
+      href="/content/07f344506379ed7e70e571fe0e6e75b36e278248d6d1202f4e51e22ef8a01a04i0"
+      style="image-rendering: pixelated;"
+    />
+  </g>
+  <g transform=" translate(274.2265625,318.3828125)">
+    <image
+      width="64"
+      height="64"
+      href="/content/d7736afdd4d29e7f3a6ff69a0a8bcbefc29814cea1573bfcdf2292dd7843f81fi0"
+      style="image-rendering: pixelated;"
+    />
+  </g>
+  <g transform=" translate(204.31250000000006,215.41015625)">
+    <image
+      width="99.57421874999999"
+      height="142.3984375"
+      href="/content/bfe9fdbd88128c20dfa6db969b050c2f9fc276c207e5168bdd68a591c5159fc7i0"
+      style="image-rendering: pixelated;"
+    />
+  </g>
+</svg>

@@ -14,23 +14,66 @@
   flex: 2; /* Allow the right column to take up two-thirds of the container */
 }
 
+.ordweb-icon {
+  width: 48px; /* Set the width of your icons */
+  height: 48px; /* Set the height of your icons */
+  margin-right: 10px; /* Add some spacing between icon and text */
+}
+
 .sidebar-item {
   display: flex; /* Use flexbox for items */
-  align-items: left; /* Center items horizontally */
-  margin-bottom: 10px; /* Add some spacing between items */
+  align-items: center; /* Center items horizontally */
+  margin-bottom: 20px;
 }
 
 .sidebar-icon {
-  width: 18px; /* Set the width of your icons */
-  height: 18px; /* Set the height of your icons */
+  width: 24px; /* Set the width of your icons */
+  height: 24px; /* Set the height of your icons */
   margin-right: 10px; /* Add some spacing between icon and text */
 }
 
 .sidebar-text {
-  font-size: 14px; /* Adjust the font size as needed */
-}
+  font-size: 20px; /* Adjust the font size as needed */
+  display: inline-block; /* Make the text inline-block to align with the icon */
+  vertical-align: text-top; /* Adjust the vertical alignment */
+  }
 
 .logo-text {
+  font-size: 30px;
+  font-weight: bold; 
+}
+
+.avatar {
+  border-radius: 50%;
+  margin-right: 10px; 
+}
+
+.handle { 
+  padding-left: 14px; 
+  font-size: 12px; /* Adjust the font size as needed */
+}
+
+.displayName {
+  padding-left: 14px; 
+  font-size: 12px; /* Adjust the font size as needed */
+  font-weight: bold;
+}
+
+.signout {
+  font-size: 12px; /* Adjust the font size as needed */
+}
+
+.signin {
   font-size: 14px; /* Adjust the font size as needed */
   font-weight: bold;
+}
+
+.user {
+  display: flex;
+  align-items: center; 
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
 }

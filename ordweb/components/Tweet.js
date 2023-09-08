@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { ReplyModal } from "./ReplyModal";
-import { getSession, signIn, signOut, useSession } from "next-auth/react";
 import ParentComponent from "./ParentComponent";
 import moment from "moment-timezone";
 import convertElapsedTime from "../utils/datetimeUtils";
 import styles from "./Tweet.module.css";
+import { formatAddress, copyToClipboard } from '../utils/display';
 let user;
 
 export function Tweet({
@@ -16,9 +16,11 @@ export function Tweet({
   twitterClientId,
   twitterClientSecret,
   twitterRedirectUri,
+  baseUrl,
+  loggedIn,
+  twitterHandle
 }) {
   const [repostButtonPosition, setRepostButtonPosition] = useState(null);
-  const [loggedIn, setLoggedIn] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [content, setContent] = useState("");
   const [likesCount, setLikesCount] = useState(0);
@@ -33,14 +35,11 @@ export function Tweet({
   const [userLikedId, setUserLikedId] = useState(false);
   const [userBookmarkedId, setUserBookmarkedId] = useState(false);
   const [userRepostedId, setUserRepostedId] = useState(false);
-  const [twitterHandle, setTwitterHandle] = useState("");
   const [repostQuoteModalOpen, setRepostQuoteModalOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [clickedButton, setClickedButton] = useState(null);
   const [buttonPosition, setButtonPosition] = useState(null);
-  //const [elapsedTime, setElapsedTime] = useState();
   const buttonRef = useRef(null);
-  const { data: session } = useSession();
   const elapsedTime = convertElapsedTime(timestamp);
   const inscriptionNumber = number;
 
@@ -59,23 +58,6 @@ export function Tweet({
     }, [tableRef, setRepostQuoteModalOpen]);
   }
   useOutsideAlerter(tableRef, setRepostQuoteModalOpen);
-
-  useEffect(() => {
-    if (session) {
-      setLoggedIn(true);
-      if (session.user.name) {
-        const usernameMatch = session.user.name.match(/\(([^)]+)\)/);
-        const twitterUsername = usernameMatch
-          ? usernameMatch[1].toLowerCase()
-          : "";
-        console.log("twitterUsername=", twitterUsername);
-        setTwitterHandle(twitterUsername);
-      }
-    } else {
-      setLoggedIn(false);
-      setTwitterHandle("");
-    }
-  }, [session]);
 
   // Fetch content from the server
   useEffect(() => {
@@ -192,6 +174,11 @@ export function Tweet({
     }
   };
 
+  function handleShareClick() {
+    console.log("baseUrl=", baseUrl);
+    copyToClipboard(baseUrl);
+  }
+
   const renderContent = () => {
     if (typeof content === "string") {
       // If content is plain text
@@ -225,9 +212,9 @@ export function Tweet({
   return (
     <div className={styles["tweet"]}>
       <div className={styles["tweet-controller"]}>
-        <div className={styles["number"]}>{number}</div>
-        <div className={styles["genesisAddress"]}>{genesis_address}</div>
-        <div className={styles["elapsedTime"]}>{elapsedTime}</div>
+      <div className={styles["number"]}>{number}</div>
+      <div className={styles["genesisAddress"]}>{formatAddress(genesis_address)}</div>
+      <div className={styles["elapsedTime"]}>{elapsedTime}</div>
       </div>
       {renderContent()}
 
@@ -235,13 +222,6 @@ export function Tweet({
         <button onClick={handleReplyClick}>
           <img src="/images/reply.png" alt="Reply" />
           <p>{repliesCount}</p>
-        </button>
-        <button onClick={handleLikeClick}>
-          <img
-            src={userLiked ? "/images/like-active.png" : "/images/like.png"}
-            alt="Like"
-          />
-          <p>{likesCount}</p>
         </button>
         <button onClick={(e) => handleRepostClick(e)}>
           <img
@@ -251,6 +231,19 @@ export function Tweet({
             alt="Repost"
           />
           <p>{repostsCount}</p>
+        </button>
+        <button onClick={handleLikeClick}>
+          <img
+            src={userLiked ? "/images/like-active.png" : "/images/like.png"}
+            alt="Like"
+          />
+          <p>{likesCount}</p>
+        </button>
+        <button onClick={handleShareClick}>
+        <img
+            src="/images/share2.png"
+            alt="Share"
+          />
         </button>
       </div>
 

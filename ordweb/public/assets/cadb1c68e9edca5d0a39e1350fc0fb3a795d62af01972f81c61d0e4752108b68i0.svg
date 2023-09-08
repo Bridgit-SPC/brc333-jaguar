@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="575" height="575">
+  <defs>
+    <filter id="displacementFilter" x="0" y="0" width="100%" height="100%">
+      <feImage xlink:href="/content/4771bd5230e029e75eb26c8a4910e18d9a248405ba7293fa58cdc82d4e4aa3e1i0" result="displacementMapImage" />
+      <feDisplacementMap in="SourceGraphic" in2="displacementMapImage" scale="50" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </defs>
+  <image xlink:href="/content/783513f2044d48fdf303e58b1d8878a2394a695e2a9cac320c4823f09524a296i0" width="575" height="575" filter="url(#displacementFilter)" />
+</svg>

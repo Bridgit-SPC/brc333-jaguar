@@ -16,30 +16,33 @@
 }
 
 .tweet-controller {
-    display: inline-block;
-/*  display: flex;
-    align-items: center; 
-    gap: 10px;  */
+  display: flex;
+  align-items: left;
+  /* Add any other styling you want */
 }
 
 .number {
   font-weight: bold;
-  font-size: 16px;  
+  font-size: 14px;  
   color: black; 
+  margin-right: 20px;
 }
 
 .genesisAddress {
-  font-size: 10px;  
-  color: gray; 
+  font-size: 14px;  
+  color: gray;
+  margin-right: 20px; 
 }
 
 .elapsedTime {
-  font-size: 10px;  
+  font-size: 14px;  
   color: gray; 
+  margin-right: 20px;
 }
 
 .content {
   font-size: 16px;
+  color: black; 
 }
 
 .text {
@@ -90,5 +93,5 @@
 
 .jsonStyles {
   font-size: 10px;
-  color: gray;
+  color: navy;
 }

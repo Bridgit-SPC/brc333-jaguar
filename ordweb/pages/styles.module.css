@@ -115,6 +115,7 @@
   justify-content: flex-end;
   position: fixed;
   right: 0;
+  align-self: flex-start; 
 }
 
 .urlInput {
@@ -125,8 +126,12 @@
   position: fixed;
   top: 0;
   left: 0;
+  padding-left: 120px; 
 }
 
 .mainContent {
   margin: 0 auto;
+  padding-right: 120px;
+  display: flex;
+  flex-direction: column;
 }

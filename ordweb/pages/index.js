@@ -12,21 +12,43 @@ export default function Feed({
   twitterClientId,
   twitterRedirectUri,
   twitterClientSecret,
+  baseUrl
 }) {
   const [page, setPage] = useState(2);
   const [tweets, setTweets] = useState(initialTweets);
-  //console.log("++++++++++>", twitterRedirectUri);
   const router = useRouter();
-  const { twitterHandle, loginError } = router.query;
+  const { twitterErrorHandle, loginError } = router.query;
+  const { data: session } = useSession();
+  const [loggedIn, setLoggedIn] = useState(false);
   const [hasLoginError, setHasLoginError] = useState(!!loginError);
+  const [twitterHandle, setTwitterHandle] = useState("");
+  const [twitterDisplayName, setTwitterDisplayName] = useState("");
 
   useEffect(() => {
     // Handle login error and twitter handle here
     setHasLoginError(!!loginError); // Convert to boolean and set the state
-    if (twitterHandle) {
+    if (twitterErrorHandle) {
       console.log("Authenticated user Twitter handle:", twitterHandle);
     }
-  }, [twitterHandle, loginError]);
+  }, [twitterErrorHandle, loginError]);
+
+  useEffect(() => {
+    if (session) {
+      setLoggedIn(true);
+      if (session.user.name) {
+        const nameMatch = session.user.name.match(/^(.*?)\s+\(([^)]+)\)/);
+        const displayName = nameMatch ? nameMatch[1] : session.user.name;
+        const twitterUsername = nameMatch ? `@${nameMatch[2].toLowerCase()}` : "";
+        console.log("displayName =", displayName);
+        console.log("twitterUsername =", twitterUsername);
+        setTwitterHandle(twitterUsername);
+        setTwitterDisplayName(displayName);
+      }
+    } else {
+      setLoggedIn(false);
+      setTwitterHandle("");
+    }
+  }, [session]);
 
   const fetchMore = async () => {
     try {
@@ -45,12 +67,16 @@ export default function Feed({
       console.error("Error fetching more tweets:", error);
     }
   };
-  const { data: session } = useSession();
+
   return (
 
   <div className={styles.container}>
     <div className={styles.sidebar}>
-      <Sidebar />
+      <Sidebar 
+        session={session}
+        twitterDisplayName={twitterDisplayName}
+        twitterHandle={twitterHandle} 
+      />
     </div>
     <div className={styles.mainContent}>
 
@@ -68,15 +94,6 @@ export default function Feed({
            <button onClick={() => signIn()}>Sign in</button>
           </div>
         )}
-
-        {session ? (
-          <div className={styles.userNav}>
-            <img src={session.user.image} className={styles.avatar} /> <br />
-            <button onClick={() => signOut()}>Sign out</button>
-          </div>
-        ) : (
-          <button onClick={() => signIn()}>Sign in</button>
-        )}
       </div>
 
       <div className={styles.feed}>
@@ -86,21 +103,21 @@ export default function Feed({
           hasMore={true}
           loader={<h4>Loading...</h4>}
         >
-          {tweets.map((tweet) => {
-            return (
-            <Tweet
-              key={tweet.inscriptionid}
-              genesis_address={tweet.genesis_address}
-              timestamp={tweet.timestamp}
-              inscriptionid={tweet.inscriptionid}
-              number={tweet.number}
-              twitterHandle={twitterHandle}
-              twitterClientId={twitterClientId}
-              twitterClientSecret={twitterClientSecret}
-              twitterRedirectUri={twitterRedirectUri}
-            />
-          );
-          })}
+           {tweets.map(tweet => (
+          <Tweet
+            key={tweet.inscriptionid}
+            genesis_address={tweet.genesis_address}
+            timestamp={tweet.timestamp}
+            inscriptionid={tweet.inscriptionid}
+            number={tweet.number}
+            twitterHandle={twitterHandle}
+            twitterClientId={twitterClientId}
+            twitterClientSecret={twitterClientSecret}
+            twitterRedirectUri={twitterRedirectUri}
+            baseUrl={baseUrl}
+            loggedIn={loggedIn}
+          />
+        ))}
         </InfiniteScroll>
       </div>
     </div>
@@ -115,6 +132,7 @@ export async function getServerSideProps(context) {
     const initialTweets = response.data.inscriptions;
     const twitterClientId = process.env.TWITTER_CLIENT_ID;
     const twitterClientSecret = process.env.TWITTER_CLIENT_SECRET;
+    const baseUrl = process.env.BASE_URL;
     const twitterRedirectUri =
        process.env.BASE_URL + process.env.TWITTER_REDIRECT_URI;
     const session = await getSession(context);
@@ -125,6 +143,7 @@ export async function getServerSideProps(context) {
         twitterRedirectUri,
         twitterClientSecret,
         session,
+        baseUrl
       },
     };
   } catch (error) {
