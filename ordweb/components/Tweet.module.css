@@ -5,6 +5,7 @@
   background-color: #fff;
   border-radius: 5px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .creator {
@@ -23,26 +24,26 @@
 
 .number {
   font-weight: bold;
-  font-size: 14px;  
-  color: black; 
+  font-size: 14px;
+  color: black;
   margin-right: 20px;
 }
 
 .genesisAddress {
-  font-size: 14px;  
+  font-size: 14px;
   color: gray;
-  margin-right: 20px; 
+  margin-right: 20px;
 }
 
 .elapsedTime {
-  font-size: 14px;  
-  color: gray; 
+  font-size: 14px;
+  color: gray;
   margin-right: 20px;
 }
 
 .content {
   font-size: 16px;
-  color: black; 
+  color: black;
 }
 
 .text {

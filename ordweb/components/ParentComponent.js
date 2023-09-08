@@ -38,6 +38,7 @@ function ParentComponent({
           quoteModalOpen={quoteModalOpen}
           setQuoteModalOpen={setQuoteModalOpen}
           tableRef={tableRef}
+          parentOnClose={onClose}
         />
       )}
 
