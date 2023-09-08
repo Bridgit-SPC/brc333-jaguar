@@ -115,3 +115,22 @@ export async function removeInteraction(interactionId) {
     throw error; // Rethrow the error to handle it elsewhere
   }
 }
+
+export async function getTweetDetail(inscriptionId) {
+  try {
+    const query = `
+      SELECT * 
+      FROM responses
+      WHERE parent = $1
+      and operation = 'reply'
+      ORDER BY timestamp DESC
+    `;
+    const client = await pool.connect();
+    const replies = await client.query(query, [inscriptionId]);
+    client.release();
+    return replies.rows;
+  } catch (error) {
+    console.error('Error fetching tweet replies:', error);
+    throw error; // Rethrow the error to handle it elsewhere
+  }
+}

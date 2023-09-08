@@ -87,11 +87,13 @@
 }
 
 .textStyles {
-  font-size: 10px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
   color: black;
 }
 
 .jsonStyles {
-  font-size: 10px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
   color: navy;
 }

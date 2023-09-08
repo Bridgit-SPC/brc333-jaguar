@@ -83,7 +83,7 @@ export default function Feed({
       <div className={styles.topRow}>
         <input
           type="text"
-          placeholder="Enter URL"
+          placeholder="Enter ordinal or meta-ordinal address"
           className={styles.urlInput}
         />
         {hasLoginError && (

@@ -18,7 +18,8 @@ export function Tweet({
   twitterRedirectUri,
   baseUrl,
   loggedIn,
-  twitterHandle
+  twitterHandle,
+  showBookmarkAction
 }) {
   const [repostButtonPosition, setRepostButtonPosition] = useState(null);
   const [loginError, setLoginError] = useState(false);
@@ -138,6 +139,47 @@ export function Tweet({
     }
   };
 
+  const handleBookmarkClick = async () => {
+    //console.log("loggedIn=", loggedIn);
+    console.log("bookmarksCount (before)=", bookmarksCount);
+    console.log("userBookmarked=", userBookmarked);
+    if (!loggedIn) {
+      signIn();
+    } else {
+      if (!userBookmarked) {
+        try {
+          //console.log('twitterHandle at handleBookmark=',twitterHandle);
+          //console.log('inscriptionid=',inscriptionid);
+          const response = await axios.post(`/api/bookmark`, {
+            inscriptionid,
+            user: twitterHandle,
+          });
+          //setBookmarksCount(bookmarksCount + 1);
+          setBookmarksCount((prevBookmarksCount) => prevBookmarksCount + 1);
+          setBookmarksLiked(true);
+        } catch (error) {
+          console.error("Error Bookmarking tweet:", error);
+        }
+      } else {
+        // Send a DELETE request to remove the bookmark
+        axios
+          .delete(`/api/removeResponse`, {
+            data: { interactionId: userBookmarkedId },
+          })
+          .then((response) => {
+            // Update BookmarksCount and userBookmarked states based on the server response
+            setBookmarksCount((prevBookmarksCount) => prevBookmarksCount - 1);
+            //setBookmarksCount(bookmarksCount-1);
+            setUserBookmarked(false);
+          })
+          .catch((error) => {
+            console.error("Error unbookmarking inscription:", error);
+          });
+      }
+    }
+  };
+
+  /*
   useEffect(() => {}, [
     likesCount,
     userLiked,
@@ -147,6 +189,7 @@ export function Tweet({
     userBookmarked,
     repliesCount,
   ]);
+  */
 
   // Handle reply button click
   const handleReplyClick = () => {
@@ -157,7 +200,7 @@ export function Tweet({
     }
   };
 
-  useEffect(() => {}, [likesCount, userLiked]);
+  //useEffect(() => {}, [likesCount, userLiked]);
 
   // Handle repost button click
   const handleRepostClick = (e) => {
@@ -239,6 +282,15 @@ export function Tweet({
           />
           <p>{likesCount}</p>
         </button>
+        {showBookmarkAction && (
+          <button onClick={handleBookmarkClick}>
+            <img
+              src={userBookmarked ? "/images/bookmark-active.png" : "/images/bookmark.png"}
+              alt="Bookmark"
+            />
+            <p>{bookmarksCount}</p>
+          </button>
+         )}
         <button onClick={handleShareClick}>
         <img
             src="/images/share2.png"
