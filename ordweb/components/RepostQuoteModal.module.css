@@ -19,8 +19,8 @@
 .modalContent {
   padding: 16px;
   border-radius: 8px;
-  background-color: #fff; 
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
+  background-color: #fff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .modalHeader {
@@ -36,7 +36,7 @@
 }
 
 .inscriptionid {
-  color: #888; 
+  color: #888;
 }
 
 .inscriptionNumber {
@@ -53,7 +53,6 @@
   border: none;
   outline: none;
 }
-
 
 .quoteHeader {
   display: flex;
@@ -101,22 +100,23 @@
 
 .inscriptor {
   font-weight: bold;
-  margin-right: 8px;  
+  margin-right: 8px;
   color: #333; /* Dark gray color for user's name */
 }
 
 .elapsedTime {
   font-weight: bold;
-  margin-right: 8px;  
+  margin-right: 8px;
   color: #333; /* Dark gray color for user's name */
 }
 
 .repost-quote-modal {
-  position: fixed;
+  position: absolute;
   z-index: 1000;
   background-color: transparent;
   padding: 16px;
-  overflow: auto; 
+  overflow: auto;
+  top: 125px;
 }
 
 /* Style for the highlighted row 
@@ -131,8 +131,8 @@
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  max-height: 80vh; 
-  overflow-y: auto; 
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .reply-modal-content {

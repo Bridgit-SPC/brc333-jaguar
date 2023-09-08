@@ -13,6 +13,7 @@ export const RepostQuoteModal = ({
   quoteModalOpen,
   setQuoteModalOpen,
   tableRef,
+  parentOnClose,
 }) => {
   const [repostsCount, setRepostsCount] = useState(reposts);
   const [userReposted, setUserReposted] = useState(posted);
@@ -71,6 +72,7 @@ export const RepostQuoteModal = ({
     }
     setModalOpen(false);
     onClose();
+    parentOnClose();
   };
 
   const handleQuoteOption = () => {
@@ -114,7 +116,7 @@ export const RepostQuoteModal = ({
       className={`${styles["repost-quote-modal"]} ${
         buttonPosition ? styles["highlighted-row"] : ""
       }`}
-      style={modalStyle}
+      // style={modalStyle}
     >
       <div className={styles["modal-content"]}>
         <button onClick={handleRepostOption}>Repost</button>
