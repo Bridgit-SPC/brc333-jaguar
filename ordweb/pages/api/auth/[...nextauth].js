@@ -1,3 +1,4 @@
+console.log("NextAuth.js file is being executed.");
 import NextAuth from "next-auth";
 import TwitterProvider from "next-auth/providers/twitter";
 export const authOptions = {
@@ -22,6 +23,12 @@ export const authOptions = {
         },
         async jwt({ token, user, account, profile, isNewUser }) {
           console.log(token, user, account, profile, isNewUser);
+          if (account) {
+            token.accessToken = account.access_token
+            token.id = profile.id
+            console.log("ACCOUNT", account);
+            console.log("TOKEN", token);
+          }
           return token;
         },
       },

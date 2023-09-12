@@ -140,3 +140,11 @@
   word-wrap: break-word; /* Prevent long words from overflowing */
   overflow-wrap: break-word; /* Prevent long words from overflowing (for Firefox) */
 }
+
+.repost {
+  /* color: blue; /* Default color for not reposted */
+}
+
+.reposted {
+  color: #EE5335; /* Color for reposted */
+}

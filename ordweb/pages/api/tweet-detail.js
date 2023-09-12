@@ -2,8 +2,10 @@ import { getTweetDetail } from '../../utils/dbFunctions';
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
+        console.log('got here');
       try {
-        const { id } = req.query; // Access the parameter from req.query
+        const inscriptionid = req.query.id;
+        //const { id } = req.query; // Access the parameter from req.query
         console.log('req.query=', req.query);  
         console.log('Fetching tweet detail for inscriptionId:', id);
   
@@ -11,7 +13,7 @@ export default async function handler(req, res) {
         //console.log('Tweet detail fetched:', tweetDetail);
   
         //res.status(200).json({ tweetDetail });
-        res.status(200);
+        //res.status(200);
       } catch (error) {
         console.error('Error fetching tweet state:', error);
         res.status(500).json({ error: 'An error occurred while fetching tweet state.' });

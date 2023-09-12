@@ -8,18 +8,33 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-export async function getTweets(page = 1, limit = 50) {
+export async function getTweets(page = 1, limit = 50, criteria = null) {
   try {
     const offset = (page - 1) * limit;
-    const query = `
-      SELECT * 
-      FROM inscriptions
-      ORDER BY number DESC
-      LIMIT $1 OFFSET $2
-    `;
+    let res; 
     const client = await pool.connect();
-    const res = await client.query(query, [limit, offset]);
+    
+    if (criteria == null) {
+      const query = `
+        SELECT * 
+        FROM inscriptions
+        ORDER BY number DESC
+        LIMIT $1 OFFSET $2
+      `;
+      res = await client.query(query, [limit, offset]);
+    } else {
+      const query = `
+        SELECT * 
+        FROM inscriptions
+        WHERE content ILIKE '%' || $3 || '%'
+        ORDER BY number DESC
+        LIMIT $1 OFFSET $2
+      `;
+      //console.log(`query=, ${query} limit=${limit} offset=${offset} criteria=${criteria}`);
+      res = await client.query(query, [limit, offset, criteria]);
+    }
     client.release();
+    console.log(`returning res.rows with length ${res.rows.length}`);
     return res.rows;
   } catch (error) {
     console.error('Error fetching tweets:', error);
@@ -70,6 +85,10 @@ export async function getTweetState(inscriptionId, user) {
            0
         ) AS repostsCount,
         COALESCE(
+          (SELECT COUNT(*) FROM responses WHERE parent = $1 AND operation = 'quote'),
+          0
+       ) AS quotesCount,
+        COALESCE(
            (SELECT COUNT(*) FROM responses WHERE parent = $1 AND operation = 'bookmark'),
            0
         ) AS bookmarksCount,
@@ -91,7 +110,7 @@ export async function getTweetState(inscriptionId, user) {
     `;
     const result = await client.query(query, [inscriptionId, user]);
     //console.log(`query= ${query}`);
-    console.log(`inscriptionId= ${inscriptionId} user = ${user}`);
+    //console.log(`inscriptionId= ${inscriptionId} user = ${user}`);
     client.release();
     return result.rows;
   } catch (error) {
@@ -108,6 +127,7 @@ export async function removeInteraction(interactionId) {
       WHERE id = $1
     `;
     const client = await pool.connect();
+    console.log('interationId to delete=', interactionId);
     await client.query(query, [interactionId]);
     client.release();
   } catch (error) {
@@ -116,8 +136,9 @@ export async function removeInteraction(interactionId) {
   }
 }
 
-export async function getTweetDetail(inscriptionId) {
+export async function getTweetDetail(inscriptionId, page = 1, limit = 50) {
   try {
+
     const query = `
       SELECT * 
       FROM responses
@@ -126,7 +147,7 @@ export async function getTweetDetail(inscriptionId) {
       ORDER BY timestamp DESC
     `;
     const client = await pool.connect();
-    const replies = await client.query(query, [inscriptionId]);
+    const replies = await client.query(query, [inscriptionId, page, offset]);
     client.release();
     return replies.rows;
   } catch (error) {

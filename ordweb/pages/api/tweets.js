@@ -5,8 +5,10 @@ export default async function handler(req, res) {
     try {
       const page = req.query.page || 1; 
       const limit = req.query.limit || 50;
+      const criteria = req.query.criteria || null;
 
-      const inscriptions = await getTweets(page, limit);
+      console.log('criteria in tweet.js=', criteria);
+      const inscriptions = await getTweets(page, limit, criteria);
       res.status(200).json({ inscriptions });
     } catch (error) {
       console.error('Error fetching inscriptions:', error);

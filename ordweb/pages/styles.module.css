@@ -102,6 +102,22 @@
   gap: 4px;
 }
 
+/* Ensure scrollbars are always visible */
+.container {
+  overflow-y: scroll; /* Always show vertical scrollbar */
+  padding-right: 17px; /* Adjust for scrollbar width, which is typically around 17px */
+}
+
+/*
+/* Optionally, you can also style the scrollbar to match your design */
+/* ::-webkit-scrollbar { */
+/*   width: 17px;  */
+/* } */ 
+
+/*::-webkit-scrollbar-thumb {  */
+/*  background-color: #888;  */
+/* } */
+
 .subContainer {
   display: flex;
   justify-content: space-between;

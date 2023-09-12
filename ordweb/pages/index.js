@@ -5,14 +5,15 @@ import Sidebar from "../components/Sidebar";
 import axios from "axios"; // Import Axios
 import styles from "./styles.module.css";
 import { useRouter } from "next/router";
-import { getSession, signIn, signOut, useSession } from "next-auth/react";
+import { getSession, signIn, signOut, useSession } from "next-auth/react"//;
+//import { Console } from "console";
 
 export default function Feed({
   initialTweets,
   twitterClientId,
   twitterRedirectUri,
   twitterClientSecret,
-  baseUrl
+  baseUrl = 'http://localhost:3000'
 }) {
   const [page, setPage] = useState(2);
   const [tweets, setTweets] = useState(initialTweets);
@@ -23,6 +24,16 @@ export default function Feed({
   const [hasLoginError, setHasLoginError] = useState(!!loginError);
   const [twitterHandle, setTwitterHandle] = useState("");
   const [twitterDisplayName, setTwitterDisplayName] = useState("");
+  const [criteria, setCriteria] = useState("");
+  const [searched, setSearched] = useState(false); 
+
+  useEffect(() => {
+    if (router.query.criteria) {
+      setCriteria(router.query.criteria);
+      //console.log('criteria set in router.query=', criteria);
+    }
+  }, [router.query]);
+
 
   useEffect(() => {
     // Handle login error and twitter handle here
@@ -36,13 +47,10 @@ export default function Feed({
     if (session) {
       setLoggedIn(true);
       if (session.user.name) {
-        const nameMatch = session.user.name.match(/^(.*?)\s+\(([^)]+)\)/);
-        const displayName = nameMatch ? nameMatch[1] : session.user.name;
-        const twitterUsername = nameMatch ? `@${nameMatch[2].toLowerCase()}` : "";
-        console.log("displayName =", displayName);
-        console.log("twitterUsername =", twitterUsername);
-        setTwitterHandle(twitterUsername);
-        setTwitterDisplayName(displayName);
+        console.log("session.user.name =", session.user.name);
+        console.log("session =", session);
+        setTwitterHandle(session.user.username);
+        setTwitterDisplayName(session.user.name);
       }
     } else {
       setLoggedIn(false);
@@ -52,10 +60,11 @@ export default function Feed({
 
   const fetchMore = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/tweets?page=${page}`,
-      );
-      const moreTweets = response.data.tweets;
+      const url = criteria ? `http://localhost:3000/api/tweets?page=${page}&criteria=${criteria}` : `http://localhost:3000/api/tweets?page=${page}`;      
+      console.log("Fetching more tweets from: " + url);
+      const response = await axios.get(url);
+      const moreTweets = response.data.inscriptions;
+      //console.log("Fetched ", response.data.inscriptions);
 
       if (Array.isArray(moreTweets)) {
          setTweets((prevTweets) => [...prevTweets, ...moreTweets]);
@@ -66,6 +75,13 @@ export default function Feed({
     } catch (error) {
       console.error("Error fetching more tweets:", error);
     }
+  };
+
+  const handleSearch = () => {
+    const url = `/?criteria=${encodeURIComponent(criteria)}`;
+    console.log("url=", url);
+    window.location.href = url;
+    setSearched(true); 
   };
 
   return (
@@ -85,7 +101,26 @@ export default function Feed({
           type="text"
           placeholder="Enter ordinal or meta-ordinal address"
           className={styles.urlInput}
-        />
+          value={criteria}
+          onChange={async (e) => {
+            const inputValue = e.target.value;
+            setCriteria(inputValue); // Update the state immediately
+            console.log("Criteria updated:", criteria);
+            // Make an API call here to check if inputValue matches data
+            /*
+            try {
+              const response = await axios.get(
+                `/api/search?query=${encodeURIComponent(inputValue)}`
+              );
+              const searchData = response.data; // Adjust this based on your API response
+              // Now you can work with the searchData as needed
+            } catch (error) {
+              console.error("Error searching data:", error);
+            } 
+            */
+          }}
+        /> 
+        <button onClick={handleSearch}>Search</button> 
         {hasLoginError && (
           <div>
             <p>
@@ -128,13 +163,17 @@ export default function Feed({
 
 export async function getServerSideProps(context) {
   try {
-    const response = await axios.get("http://localhost:3000/api/tweets");
+    const queryParams = new URLSearchParams(context.req.url.split("?")[1]);
+    const criteria = queryParams.get("criteria");
+    const url = criteria ? `http://localhost:3000/api/tweets?criteria=${criteria}` : `http://localhost:3000/api/tweets`;
+    console.log("Url in server side:", url);
+    const response = await axios.get(url);
+    //const response = await axios.get(`http://localhost:3000/api/tweets`); //CHANGE FOR PROD
     const initialTweets = response.data.inscriptions;
     const twitterClientId = process.env.TWITTER_CLIENT_ID;
     const twitterClientSecret = process.env.TWITTER_CLIENT_SECRET;
     const baseUrl = process.env.BASE_URL;
-    const twitterRedirectUri =
-       process.env.BASE_URL + process.env.TWITTER_REDIRECT_URI;
+    const twitterRedirectUri = process.env.BASE_URL + process.env.TWITTER_REDIRECT_URI;
     const session = await getSession(context);
     return {
       props: {

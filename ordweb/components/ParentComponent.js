@@ -6,6 +6,7 @@ function ParentComponent({
   onClose,
   buttonPosition,
   reposted,
+  userRepostedId,
   twitterHandle,
   inscriptionid,
   quotedInscriptionContent,
@@ -31,6 +32,7 @@ function ParentComponent({
           onClose={() => setRepostModalOpen(false)}
           buttonPosition={buttonPosition}
           reposted={reposted}
+          userRepostedId={userRepostedId}
           twitterHandle={twitterHandle}
           inscriptionid={inscriptionid}
           quotedInscriptionContent={quotedInscriptionContent}

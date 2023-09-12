@@ -325,6 +325,7 @@ export function Tweet({
           inscriptor={genesis_address}
           elapsedTime={elapsedTime}
           inscriptionNumber={number}
+          userRepostedId={userRepostedId}
         />
       )}
     </div>

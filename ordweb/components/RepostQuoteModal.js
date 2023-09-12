@@ -5,7 +5,8 @@ import axios from "axios";
 export const RepostQuoteModal = ({
   onClose,
   buttonPosition,
-  posted,
+  reposted,
+  userRepostedId,
   twitterHandle,
   inscriptionid,
   quotedInscriptionContent,
@@ -16,28 +17,11 @@ export const RepostQuoteModal = ({
   parentOnClose,
 }) => {
   const [repostsCount, setRepostsCount] = useState(reposts);
-  const [userReposted, setUserReposted] = useState(posted);
+  const [userReposted, setUserReposted] = useState(reposted);
   const modalRef = useRef(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
-
-  // useEffect(() => {
-  //   const updateModalPosition = () => {
-  //     const buttonPosition = modalRef.current.getBoundingClientRect();
-  //     const newTop = buttonPosition.top + window.scrollY - 30 + "px";
-  //     setModalPosition((prevPosition) => ({
-  //       ...prevPosition,
-  //       top: newTop,
-  //     }));
-  //   };
-
-  //   window.addEventListener("scroll", updateModalPosition);
-  //   updateModalPosition();
-
-  //   return () => {
-  //     window.removeEventListener("scroll", updateModalPosition);
-  //   };
-  // }, []);
+  const repostButtonClass = userReposted ? styles.reposted : styles.repost;
 
   const handleRepostOption = async () => {
     if (!userReposted) {
@@ -51,7 +35,7 @@ export const RepostQuoteModal = ({
         console.log("repostsCount (before setRepostsCount) =", repostsCount);
         setRepostsCount(repostsCount + 1);
         console.log("repostsCount (after setRepostsCount)=", repostsCount);
-        setUserReposted(posted); // Update userReposted state using the posted prop
+        setUserReposted(reposted); // Update userReposted state using the posted prop
       } catch (error) {
         console.error("Error reposting tweet:", error);
       }
@@ -95,21 +79,6 @@ export const RepostQuoteModal = ({
     }
   };
 
-  // useEffect(() => {
-  //   console.log("changed - modalOpen=", modalOpen);
-  //   if (modalOpen) {
-  //     document.addEventListener("click", handleOutsideClick);
-  //     console.log("opening listener");
-  //   } else {
-  //     document.removeEventListener("click", handleOutsideClick);
-  //     console.log("removing listener - modalOpen=", modalOpen);
-  //   }
-  //   return () => {
-  //     document.removeEventListener("click", handleOutsideClick);
-  //     console.log("removing on return");
-  //   };
-  // }, [modalOpen, onClose]);
-
   return (
     <div
       ref={tableRef}
@@ -119,7 +88,7 @@ export const RepostQuoteModal = ({
       // style={modalStyle}
     >
       <div className={styles["modal-content"]}>
-        <button onClick={handleRepostOption}>Repost</button>
+      <button className={repostButtonClass} onClick={handleRepostOption}>Repost</button>
         <br />
         <button onClick={handleQuoteOption}>Quote</button>
       </div>
