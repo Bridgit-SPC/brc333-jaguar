@@ -17,7 +17,7 @@ export async function getTweets(page = 1, limit = 50, criteria = null) {
     if (criteria == null) {
       const query = `
         SELECT * 
-        FROM inscriptions
+        FROM info_inscriptions
         ORDER BY number DESC
         LIMIT $1 OFFSET $2
       `;
@@ -25,7 +25,7 @@ export async function getTweets(page = 1, limit = 50, criteria = null) {
     } else {
       const query = `
         SELECT * 
-        FROM inscriptions
+        FROM info_inscriptions
         WHERE content ILIKE '%' || $3 || '%'
         ORDER BY number DESC
         LIMIT $1 OFFSET $2

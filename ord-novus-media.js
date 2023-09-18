@@ -199,28 +199,47 @@ const client = await pool.connect();
     const values = [];
     let placeholders1 = '';
     let placeholders2 = '';
+    let placeholders3 = '';
+    let placeholders4 = '';
+    let placeholders5 = '';
+    let placeholders6 = '';
+    let placeholders7 = '';
     console.log(inscriptions.length,' inscriptions starting with ',inscriptions[0].inscriptionId);
-    for (let i = 0; i < inscriptions.length; i++) {
+    for (let i = 0; i < Math.min(inscriptions.length, PROCESS_BATCH_SIZE); i++) {
       const inscription = inscriptions[i];
-      const offset = i * 2;
+      const offset = i * 7;
 
       placeholders1 += `WHEN inscriptionid = $${offset + 1} THEN $${offset + 2} `;
-      placeholders2 += `$${offset + 1},`; 
+      placeholders2 += `WHEN inscriptionid = $${offset + 1} THEN $${offset + 3} `;
+      placeholders3 += `WHEN inscriptionid = $${offset + 1} THEN $${offset + 4} `;
+      placeholders4 += `WHEN inscriptionid = $${offset + 1} THEN $${offset + 5} `;
+      placeholders5 += `WHEN inscriptionid = $${offset + 1} THEN CAST($${offset + 6} AS jsonb) `;
+      placeholders6 += `WHEN inscriptionid = $${offset + 1} THEN $${offset + 7} `;
+      placeholders7 += `$${offset + 1},`; 
 
       values.push(
         inscription.inscriptionId,
-        JSON.stringify(inscription.content)
+        JSON.stringify(inscription.content),
+        inscription.protocol,
+        inscription.operation,
+        inscription.reg_name,
+        JSON.stringify(inscription.json_object), 
+        inscription.ticker,
       );
     }
-    placeholders2 = placeholders2.slice(0, -1);
+    placeholders7 = placeholders7.slice(0, -1);
 
     const updateQuery = `
-    UPDATE inscriptions
-    SET content = CASE
-    ${placeholders1}
-    END
-    WHERE inscriptionid IN (${placeholders2})
-    RETURNING *;
+      UPDATE inscriptions
+      SET
+        content = CASE ${placeholders1} END,
+        protocol = CASE ${placeholders2} END,
+        operation = CASE ${placeholders3} END,
+        reg_name = CASE ${placeholders4} END,
+        json_object = CASE ${placeholders5} END,
+        ticker = CASE ${placeholders6} END
+      WHERE inscriptionid IN (${placeholders7})
+      RETURNING *;
     `;
 
     //console.log(`update Query: ${updateQuery}`);
@@ -323,9 +342,42 @@ async function updateInscriptions() {
           await saveContentToFile(inscription.content, inscription.contentType, inscription.inscriptionId);
           textInscriptions.push({ ...inscription, content: `${inscription.inscriptionId}.${extension}` });
         } else {
-          // Convert the buffer to a string
-          const textContent = inscription.content.toString('utf-8'); // Assuming UTF-8 encoding
-          //console.log('textContent =',textContent);
+          const textContent = inscription.content.toString('utf-8'); 
+          
+          //console.log('textContent=',textContent);
+          //console.log('inscription.contentType=',inscription.contentType);
+          //console.log(`startsWith { = ${textContent.trim().startsWith('{')}`); 
+          //console.log(`textContent.includes('"p"')=${textContent.includes('"p"')}`);
+
+          if (inscription.contentType.startsWith('application/json') || 
+               (inscription.contentType.startsWith('text/plain') && 
+               textContent.trim().startsWith('{') && /\s*{\s*"p"\s*/.test(textContent))) {
+            try {
+              const parsedJSON = JSON.parse(textContent);
+              inscription.protocol = parsedJSON.p || null;
+              inscription.operation = parsedJSON.op || null;
+              inscription.json_object = parsedJSON;
+
+              if (!!parsedJSON.tick) {
+                inscription.ticker = parsedJSON.tick;
+              }
+      
+              console.log(`Updated json content for inscription ${inscription.inscriptionId}`);
+            } catch (error) {
+              console.error(`Error parsing JSON content for inscription ID ${inscription.inscriptionId}: ${error}`);
+            }
+          } else if (/^[ \t]*[A-Za-z]+\.[A-Za-z]+[ \t]*$/.test(textContent)) {
+            inscription.protocol = "sns";
+            inscription.operation = "reg";
+            inscription.reg_name = textContent.trim();
+    
+           console.log(`Updated sns fields for inscription ID ${inscription.inscriptionId}`);
+          } else if (/^[ \t]*[A-Za-z]+\.[A-Za-z]+(\.[A-Za-z]+){0,5}\.\s*$/.test(textContent)) {
+            inscription.protocol = "meta";
+            inscription.operation = "reg";
+            inscription.reg_name = textContent.trim();
+          }
+
           textInscriptions.push({ ...inscription, content: textContent });
           numberOfTextInscriptions += 1;
         }
@@ -350,4 +402,3 @@ async function updateInscriptions() {
 updateInscriptions().catch(error => {
   console.error('Failed to start updating inscriptions:', error, ' ',new Date());
 });
-

@@ -16,8 +16,8 @@ const pool = new Pool({
 });
 
 const lowestCurse = -80000;
-const startingPoint = process.argv[2];
-const PROCESS_BATCH_SIZE = process.argv[3];
+const startingPoint = process.argv[2] || 30000000;
+const PROCESS_BATCH_SIZE = process.argv[3] || 1000000;
 
 function logToFile(message) {
   fs.writeFileSync(LOG_FILE_PATH, `[${new Date().toISOString()}] - ${message}\n`, { flag: 'a' 
@@ -33,13 +33,11 @@ async function getInscriptionLinks(currentNumber) {
 
     const response = await axios.get(url);
     if (!response || response.status !== 200) {
-      console.error(`Error fetching inscription links. Status code: ${response ? 
-response.status : 'Unknown'}`);
+      console.error(`Error fetching inscription links. Status code: ${response ? response.status : 'Unknown'}`);
       return null;
     }
 
     const jsonData = response.data;
-    //console.log('href in getInscriptionLinks =', jsonData._links.self.href);
     //console.log('jsonData in getInscriptionLinks =', jsonData);
 
     if (jsonData && jsonData.inscriptions) {
@@ -168,18 +166,16 @@ async function updateInscriptions() {
         logToFile('No more inscription links to fetch.');
         break;
       }
-      //console.log('urls =',urls);
+      console.log('urls =',urls);
 
       let currentUrl = "";
       let inscriptions = [];
-      for (let i = 0; i < BATCH_SIZE; i++) {
+      for (let i = 0; i < Math.min(BATCH_SIZE, urls.length); i++) {
         let inscription = {};
-        currentUrl = urls[i].href;
-        //console.log('currentUrl =', currentUrl );
-        inscription.id = getUrlCaboose(urls[i].href);
+        currentUrl = urls[i];
+        inscription.id = urls[i];
         inscription.number =  currentNumber - i;
-        //console.log(`i = ${i}, lowestMissingNumber = ${lowestMissingNumber},inscription.number = ${inscription.number}`);
-        //console.log('inscription=', inscription);
+        console.log('inscription=', inscription);
         if (!inscription ) {
          logToFile(`No inscriptions fetched from: ${currentUrl}`);
          console.log(`No inscriptions fetched from: ${currentUrl}`);
